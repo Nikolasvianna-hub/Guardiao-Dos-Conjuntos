@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0f26">
+  <title>Guardião dos Conjuntos</title>
+  <link rel="icon" href="data:,">
+  <style>
+    @font-face {
+      font-family: 'Press Start 2P';
+      src: url('fonts/PressStart2P-Regular.ttf') format('truetype');
+      font-display: block;
+    }
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #0d0f26;
+      overflow: hidden;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #game { width: 100%; height: 100%; }
+    canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+  </style>
+</head>
+<body>
+  <div id="game"></div>
+  <noscript>Ative o JavaScript para jogar.</noscript>
+
+  <script src="lib/phaser.min.js"></script>
+  <script src="src/config.js"></script>
+  <script src="src/settings.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/ui.js"></script>
+  <script src="src/studyData.js"></script>
+  <script src="src/scenes/BootScene.js"></script>
+  <script src="src/scenes/TitleScene.js"></script>
+  <script src="src/scenes/MenuScene.js"></script>
+  <script src="src/scenes/GameScene.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>
