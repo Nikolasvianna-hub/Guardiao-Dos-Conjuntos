@@ -1,0 +1,23 @@
+GUARDIAO DOS CONJUNTOS - projeto Phaser (PARCIAL)
+
+STATUS: incompleto e ainda nao testado no navegador. Ainda nao abre o menu.
+
+PRONTO
+- lib/phaser.min.js: Phaser 3.90.0 (local, nao depende de internet)
+- fonts/: Press Start 2P (licenca OFL incluida)
+- assets/img/: arte do menu ja recortada (fundo magenta removido): cena, mago, botao, painel, icones, emblema, brilhos
+- src/config.js: opcoes do jogo (video de fundo, botao Sair, audio, paleta)
+- src/settings.js: volume, musica e efeitos salvos no navegador
+- src/audio.js: musica e efeitos (nao toca se o arquivo nao existir)
+- src/ui.js: botoes, titulo e troca de cena com fade
+
+FALTA
+- src/studyData.js (conteudo da aba Estudos)
+- src/scenes/BootScene.js, TitleScene.js, MenuScene.js, GameScene.js
+- src/main.js
+- instrucoes de publicacao
+
+COMO RODAR (quando estiver completo)
+O navegador nao carrega imagens abrindo o index.html direto. Use um servidor local:
+- VS Code: extensao Live Server, botao direito no index.html > Open with Live Server
+- ou no terminal, dentro desta pasta: python -m http.server 8000  e abra http://localhost:8000
