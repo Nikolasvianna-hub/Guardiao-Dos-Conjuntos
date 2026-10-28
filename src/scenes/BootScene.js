@@ -9,7 +9,7 @@ class BootScene extends Phaser.Scene {
     this.load.on('progress', (v) => bar.setScale(v, 1));
 
     ['menu_scene', 'wizard_idle', 'btn_normal',
-     'icon_play', 'icon_gear', 'icon_book', 'icon_door'].forEach((k) => {
+      'icon_play', 'icon_gear', 'icon_book', 'icon_door', 'icon_close'].forEach((k) => {
       this.load.image(k, 'assets/img/' + k + '.png');
     });
   }

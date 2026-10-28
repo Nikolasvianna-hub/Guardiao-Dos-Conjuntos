@@ -8,7 +8,7 @@ const config = {
   backgroundColor: '#0d0f26',
   pixelArt: true,
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: [BootScene, MenuScene],
+  scene: [BootScene, MenuScene, GameScene],
 };
 
 // espera a fonte pixel carregar antes de iniciar
