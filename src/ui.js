@@ -51,7 +51,7 @@ GDC.UI = {
       if (!enabled) return;
       bg.setTint(0xaaaaaa);
       c.setScale(0.96);
-      GDC.Audio.sfx(scene, 'sfxClick');
+      GDC.Audio.sfx(scene, opts.soundKey || 'sfxClick');
     });
     bg.on('pointerup', () => {
       if (!enabled) return;

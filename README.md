@@ -24,43 +24,37 @@ A ideia é facilitar o aprendizado de matemática para jovens em ambientes escol
 
 ## 📚 Conteúdo matemático
 
-> **Conteúdo sorteado:** _[PREENCHER: ex. "1. Conjuntos (definição, operações: união, interseção, complemento, subconjuntos)"]_
-
-O jogador pratica, em desafios de nível Ensino Médio:
-
-- _[PREENCHER: ex. união e interseção de conjuntos]_
-- _[PREENCHER: ex. complemento e subconjuntos]_
-- _[PREENCHER: ex. cardinalidade e diagramas de Venn]_
+O jogo trabalha cardinalidade, princípio da inclusão e exclusão com dois e três conjuntos, regiões de diagramas de Venn e problemas contextualizados.
 
 O gabarito completo das questões está em [`docs/gabarito.md`](docs/gabarito.md).
 
 ## 🧙 Enredo
 
-_[PREENCHER: conte a história do jogo em 1 ou 2 parágrafos. Quem é o guardião? Qual é a ameaça? Por que os conjuntos importam nessa história?]_
-
-> Pelo nome dos arquivos do jogo, o protagonista parece ser um mago (`wizard`) que enfrenta um Paradoxo (`paradox`). Se for isso, vale usar essa ideia como base.
+O Guardião protege o Reino dos Conjuntos e o Grande Diagrama de Venn. O Paradoxo envia criaturas com enigmas matemáticos para apagar a ordem do reino; cada resposta correta transforma-se em um feitiço que impede o avanço da invasão.
 
 Versão completa em [`docs/enredo.md`](docs/enredo.md).
 
 ## 🕹️ Como jogar
 
 1. Abra o [link do jogo](https://nikolasvianna-hub.github.io/Guardiao-Dos-Conjuntos/).
-2. No menu, clique em **Jogar**.
-3. _[PREENCHER: explique o objetivo, como responder às questões e como o jogador ganha ou perde.]_
+2. No menu, escolha **Jogar** e selecione um modo: quiz com tempo, quiz sem tempo ou desenho de símbolos.
+3. Nos quizzes, toque ou clique na resposta. No modo de desenho, trace `U` para união ou `∩` para interseção e selecione **Conjurar**.
+4. Respostas erradas custam uma vida; no modo com tempo, deixar o cronômetro acabar também custa uma vida. Proteja o castelo e complete os desafios para vencer.
 
-O botão de ajuda (**?**) dentro do jogo mostra as instruções a qualquer momento. As regras detalhadas estão em [`docs/instrucoes.md`](docs/instrucoes.md).
+As instruções detalhadas estão em [`docs/instrucoes.md`](docs/instrucoes.md).
 
 | Controle | Ação |
 | --- | --- |
-| Clique / toque | _[PREENCHER]_ |
-| Ícone de som / música | Liga e desliga efeitos e trilha |
-| Ícone de engrenagem | Abre as configurações |
+| Toque / clique | Escolhe uma resposta ou botão |
+| Dedo / mouse no modo de desenho | Traça o símbolo dentro da área indicada |
+| **Conjurar** / **Limpar** | Confirma ou apaga o traço |
+| **Opções** | Liga e desliga música e efeitos sonoros |
 
 ## 👥 Equipe
 
 | Nome | Função |
 | --- | --- |
-| Nikolas Vianna | _[PREENCHER: ex. programação]_ |
+| Nikolas Vianna | Desenvolvimento do jogo |
 | _[PREENCHER]_ | _[PREENCHER]_ |
 
 **Disciplina:** Matemática Discreta · **Professor:** _[PREENCHER]_

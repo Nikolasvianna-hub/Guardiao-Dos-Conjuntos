@@ -8,6 +8,15 @@ class MenuScene extends Phaser.Scene {
     const bg = this.add.image(W / 2, H / 2, 'menu_scene');
     bg.setScale(Math.max(W / bg.width, H / bg.height));
     const s = bg.scaleX;
+    this.tweens.add({
+      targets: bg,
+      scaleX: s * 1.035,
+      scaleY: s * 1.035,
+      duration: 12000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
 
     // mago em cima do penhasco, à esquerda da torre
     const wiz = this.add.image(
@@ -16,22 +25,72 @@ class MenuScene extends Phaser.Scene {
       'wizard_idle'
     ).setOrigin(0.5, 1);
     wiz.setScale((130 / wiz.height) * s);
+    this.tweens.add({
+      targets: wiz,
+      y: wiz.y - 7,
+      duration: 1800,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+    this.tweens.add({
+      targets: wiz,
+      scaleY: wiz.scaleY * 1.025,
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
 
-    GDC.UI.title(this, W / 2, 62, 'GUARDIÃO\nDOS CONJUNTOS', 26);
+    const title = GDC.UI.title(this, W / 2, 62, 'GUARDIÃO\nDOS CONJUNTOS', 26);
+    title.setAlpha(0).setY(78);
+    this.tweens.add({ targets: title, alpha: 1, y: 62, duration: 700, ease: 'Cubic.easeOut' });
+    this.createSparkles();
+    GDC.Audio.playMusic(this, 'musicMenu');
 
     const items = [
       ['JOGAR', 'icon_play'], ['OPÇÕES', 'icon_gear'],
       ['ESTUDOS', 'icon_book'], ['SAIR', 'icon_door'],
     ];
     items.forEach(([label, icon], i) => {
-      GDC.UI.button(this, W / 2, 600 + i * 96, label, {
+      const targetY = 600 + i * 96;
+      const button = GDC.UI.button(this, W / 2, targetY + 28, label, {
         icon: icon,
         onClick: () => {
-          if (i === 0) GDC.UI.goTo(this, 'GameScene');
+          if (i === 0) GDC.UI.goTo(this, 'ModeSelectScene');
           if (i === 1) this.showOptions();
           if (i === 2) this.showStudies();
           if (i === 3) this.showExit();
         },
+      });
+      button.setAlpha(0);
+      this.tweens.add({
+        targets: button,
+        y: targetY,
+        alpha: 1,
+        duration: 450,
+        delay: 220 + i * 110,
+        ease: 'Back.easeOut',
+      });
+    });
+  }
+
+  createSparkles() {
+    const positions = [[60, 270], [460, 315], [385, 130], [70, 470], [465, 525]];
+    positions.forEach(([x, y], index) => {
+      const sparkle = this.add.image(x, y, index % 2 ? 'sparkle_small' : 'sparkle_big')
+        .setScale(index % 2 ? 0.18 : 0.12)
+        .setAlpha(0.12);
+      this.tweens.add({
+        targets: sparkle,
+        y: y - 16,
+        alpha: 0.72,
+        angle: 45,
+        duration: 1500 + index * 180,
+        delay: index * 230,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
       });
     });
   }
@@ -40,6 +99,7 @@ class MenuScene extends Phaser.Scene {
     this.showPanel('OPÇÕES', 'Som e música podem ser ligados ou desligados. As escolhas ficam salvas neste aparelho.', [
       {
         label: `EFEITOS: ${GDC.Settings.data.sfx ? 'LIGADOS' : 'DESLIGADOS'}`,
+        soundKey: 'sfxClick',
         onClick: (button) => {
           GDC.Settings.data.sfx = !GDC.Settings.data.sfx;
           GDC.Settings.save();
@@ -48,6 +108,7 @@ class MenuScene extends Phaser.Scene {
       },
       {
         label: `MÚSICA: ${GDC.Settings.data.music ? 'LIGADA' : 'DESLIGADA'}`,
+        soundKey: 'sfxClick',
         onClick: (button) => {
           GDC.Settings.data.music = !GDC.Settings.data.music;
           GDC.Settings.save();
@@ -104,6 +165,7 @@ class MenuScene extends Phaser.Scene {
       height: 68,
       fontSize: 13,
       icon: 'icon_close',
+      soundKey: 'sfxBack',
       onClick: () => {
         this.panel.destroy(true);
         this.panel = null;

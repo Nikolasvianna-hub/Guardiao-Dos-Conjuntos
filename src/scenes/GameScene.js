@@ -72,13 +72,27 @@ const GDC_QUESTIONS = [
   },
 ];
 
+const GDC_DRAW_CHALLENGES = [
+  { type: 'SIMBOLO DE UNIAO', prompt: 'Desenhe um U para representar a uniao.', symbol: 'U', gesture: 'u' },
+  { type: 'SIMBOLO DE INTERSECAO', prompt: 'Desenhe ∩ para representar a intersecao.', symbol: '∩', gesture: 'cap' },
+  { type: 'SIMBOLO DE UNIAO', prompt: 'Desenhe um U para representar A uniao B.', symbol: 'U', gesture: 'u' },
+  { type: 'SIMBOLO DE INTERSECAO', prompt: 'Desenhe ∩ para representar A intersecao B.', symbol: '∩', gesture: 'cap' },
+  { type: 'SIMBOLO DE UNIAO', prompt: 'Desenhe um U para representar a uniao dos conjuntos.', symbol: 'U', gesture: 'u' },
+  { type: 'SIMBOLO DE INTERSECAO', prompt: 'Desenhe ∩ para representar a parte comum.', symbol: '∩', gesture: 'cap' },
+];
+
 class GameScene extends Phaser.Scene {
   constructor() {
     super('GameScene');
   }
 
-  create() {
+  create(data = {}) {
     const { W, H } = GDC;
+    this.mode = data.mode || 'timed';
+    this.isDrawingMode = this.mode === 'draw';
+    this.isTimedMode = this.mode !== 'relaxed';
+    this.questions = this.isDrawingMode ? GDC_DRAW_CHALLENGES : GDC_QUESTIONS;
+    GDC.Audio.playMusic(this, 'musicGame');
     const background = this.add.image(W / 2, H / 2, 'menu_scene');
     background.setScale(Math.max(W / background.width, H / background.height));
     background.setAlpha(0.42);
@@ -102,7 +116,10 @@ class GameScene extends Phaser.Scene {
 
   createHud() {
     const { W } = GDC;
-    GDC.UI.title(this, W / 2, 34, 'DEFESA DO CASTELO', 15);
+    const heading = this.mode === 'draw'
+      ? 'CONJURACAO DE SIMBOLOS'
+      : this.mode === 'relaxed' ? 'QUIZ TRANQUILO' : 'DEFESA DO CASTELO';
+    GDC.UI.title(this, W / 2, 34, heading, 15);
     this.statusText = this.add.text(28, 76, '', {
       fontFamily: GDC.FONT_BODY,
       fontSize: '19px',
@@ -116,6 +133,13 @@ class GameScene extends Phaser.Scene {
 
     this.add.rectangle(W / 2, 128, 480, 14, 0x191d3a).setStrokeStyle(2, GDC.C.cyan);
     this.timerBar = this.add.rectangle(32, 128, 476, 8, GDC.C.cyan).setOrigin(0, 0.5);
+    this.timerLabel = this.add.text(W / 2, 128, 'SEM TEMPO', {
+      fontFamily: GDC.FONT,
+      fontSize: '12px',
+      color: GDC.CSS.cyan,
+    }).setOrigin(0.5);
+    this.timerBar.setVisible(this.isTimedMode);
+    this.timerLabel.setVisible(!this.isTimedMode);
 
     this.add.rectangle(W / 2, 270, 500, 198, 0x10142f, 0.97)
       .setStrokeStyle(4, GDC.C.gold);
@@ -141,8 +165,8 @@ class GameScene extends Phaser.Scene {
       wordWrap: { width: 440 },
     }).setOrigin(0.5);
 
-    this.add.line(0, 0, 38, 588, W - 38, 588, GDC.C.gold, 0.9).setLineWidth(4);
-    this.add.text(W / 2, 570, 'CASTELO', {
+    this.castleLine = this.add.line(0, 0, 38, 588, W - 38, 588, GDC.C.gold, 0.9).setLineWidth(4);
+    this.castleLabel = this.add.text(W / 2, 570, 'CASTELO', {
       fontFamily: GDC.FONT,
       fontSize: '12px',
       color: GDC.CSS.gold,
@@ -150,7 +174,7 @@ class GameScene extends Phaser.Scene {
       padding: { x: 8, y: 4 },
     }).setOrigin(0.5);
 
-    this.feedbackText = this.add.text(W / 2, 620, '', {
+    this.feedbackText = this.add.text(W / 2, this.isDrawingMode ? 650 : 620, '', {
       fontFamily: GDC.FONT_BODY,
       fontSize: '18px',
       color: '#ffffff',
@@ -183,11 +207,43 @@ class GameScene extends Phaser.Scene {
 
   createControls() {
     const { W } = GDC;
-    this.addAnswerButton(145, 700, 0);
-    this.addAnswerButton(W - 145, 700, 1);
-    this.addAnswerButton(145, 800, 2);
-    this.addAnswerButton(W - 145, 800, 3);
+    if (this.isDrawingMode) {
+      this.createDrawingControls();
+    } else {
+      this.addAnswerButton(145, 700, 0);
+      this.addAnswerButton(W - 145, 700, 1);
+      this.addAnswerButton(145, 800, 2);
+      this.addAnswerButton(W - 145, 800, 3);
+    }
     this.createActionButton(W / 2, 919, 210, 54, 'MENU', () => this.goToMenu(), GDC.C.slate);
+  }
+
+  createDrawingControls() {
+    const { W } = GDC;
+    this.castleLine.setVisible(false);
+    this.castleLabel.setVisible(false);
+    this.drawZone = new Phaser.Geom.Rectangle(50, 386, W - 100, 174);
+    this.drawPad = this.add.rectangle(W / 2, 473, W - 88, 184, 0x10142f, 0.92)
+      .setStrokeStyle(3, GDC.C.cyan)
+      .setInteractive({ useHandCursor: false });
+    this.guideSymbolText = this.add.text(W / 2, 474, '', {
+      fontFamily: GDC.FONT_BODY,
+      fontSize: '112px',
+      color: GDC.CSS.cyan,
+    }).setOrigin(0.5).setAlpha(0.2);
+    this.drawGraphics = this.add.graphics().setDepth(5);
+    this.drawingHint = this.add.text(W / 2, 586, 'Desenhe com um traco e toque em CONJURAR.', {
+      fontFamily: GDC.FONT_BODY,
+      fontSize: '17px',
+      color: '#ffffff',
+      align: 'center',
+    }).setOrigin(0.5);
+    this.createActionButton(145, 710, 230, 82, 'CONJURAR', () => this.submitDrawing(), GDC.C.slate);
+    this.createActionButton(W - 145, 710, 230, 82, 'LIMPAR', () => this.clearDrawing(), GDC.C.slate);
+    this.drawPad.on('pointerdown', (pointer) => this.startDrawing(pointer));
+    this.input.on('pointermove', (pointer) => this.continueDrawing(pointer));
+    this.input.on('pointerup', () => this.finishDrawing());
+    this.input.on('pointerupoutside', () => this.finishDrawing());
   }
 
   addAnswerButton(x, y, optionIndex) {
@@ -216,6 +272,7 @@ class GameScene extends Phaser.Scene {
     shape.on('pointerdown', () => shape.setFillStyle(0x4b5592));
     shape.on('pointerup', () => {
       shape.setFillStyle(color);
+      GDC.Audio.sfx(this, 'sfxClick');
       onClick();
     });
     container.setButtonEnabled = (enabled) => {
@@ -225,6 +282,94 @@ class GameScene extends Phaser.Scene {
     };
     container.text = text;
     return container;
+  }
+
+  startDrawing(pointer) {
+    if (!this.isDrawingMode || !this.active || this.answerLocked) return;
+    if (!this.drawZone.contains(pointer.worldX, pointer.worldY)) return;
+    this.isDrawingStroke = true;
+    this.gesturePoints = [{ x: pointer.worldX, y: pointer.worldY }];
+    this.drawingHint.setText('TRACO INICIADO');
+    this.drawGraphics.clear();
+    this.drawGraphics.lineStyle(12, GDC.C.gold, 1);
+    this.drawGraphics.beginPath();
+    this.drawGraphics.moveTo(pointer.worldX, pointer.worldY);
+  }
+
+  continueDrawing(pointer) {
+    if (!this.isDrawingStroke) return;
+    if (!pointer.isDown) return;
+    const previous = this.gesturePoints[this.gesturePoints.length - 1];
+    const point = { x: pointer.worldX, y: pointer.worldY };
+    if (Phaser.Math.Distance.Between(previous.x, previous.y, point.x, point.y) < 3) return;
+    this.gesturePoints.push(point);
+    this.drawingHint.setText(`TRACO: ${this.gesturePoints.length} PONTOS`);
+    this.drawGraphics.lineTo(point.x, point.y);
+    this.drawGraphics.strokePath();
+    this.drawGraphics.beginPath();
+    this.drawGraphics.moveTo(point.x, point.y);
+  }
+
+  finishDrawing() {
+    if (!this.isDrawingStroke) return;
+    this.isDrawingStroke = false;
+    this.drawGraphics.strokePath();
+  }
+
+  clearDrawing() {
+    this.gesturePoints = [];
+    this.drawGraphics.clear();
+    this.drawingHint.setText('Desenhe com um traco e toque em CONJURAR.');
+    this.feedbackText.setText('');
+  }
+
+  submitDrawing() {
+    if (!this.active || this.answerLocked) return;
+    if (!this.gesturePoints || this.gesturePoints.length < 8) {
+      this.feedbackText.setColor(GDC.CSS.gold).setText('Desenhe o simbolo na area antes de conjurar.');
+      return;
+    }
+    if (this.recognizeGesture(this.gesturePoints, this.currentQuestion.gesture)) {
+      this.resolveCorrectAnswer();
+      return;
+    }
+    this.clearDrawing();
+    this.missAnswer('O traco nao correspondeu ao simbolo. O Paradoxo avancou!');
+  }
+
+  recognizeGesture(points, expected) {
+    const xs = points.map((point) => point.x);
+    const ys = points.map((point) => point.y);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    const width = maxX - minX;
+    const height = maxY - minY;
+    if (width < 45 || height < 55 || width / height < 0.35) return false;
+
+    const normalized = points.map((point) => ({
+      x: (point.x - minX) / width,
+      y: (point.y - minY) / height,
+    }));
+    const first = normalized[0];
+    const last = normalized[normalized.length - 1];
+    const endpointGap = Math.abs(first.x - last.x);
+    if (endpointGap < 0.5) return false;
+
+    if (expected === 'u') {
+      const bottomIndex = normalized.reduce((best, point, index, list) => (
+        point.y > list[best].y ? index : best
+      ), 0);
+      return first.y < 0.42 && last.y < 0.42 && normalized[bottomIndex].y > 0.68
+        && bottomIndex > normalized.length * 0.18 && bottomIndex < normalized.length * 0.82;
+    }
+
+    const topIndex = normalized.reduce((best, point, index, list) => (
+      point.y < list[best].y ? index : best
+    ), 0);
+    return first.y > 0.58 && last.y > 0.58 && normalized[topIndex].y < 0.34
+      && topIndex > normalized.length * 0.18 && topIndex < normalized.length * 0.82;
   }
 
   showIntro() {
@@ -261,7 +406,7 @@ class GameScene extends Phaser.Scene {
   }
 
   startQuestion() {
-    const question = GDC_QUESTIONS[this.roundIndex];
+    const question = this.questions[this.roundIndex];
     if (!question) {
       this.showEnd(true);
       return;
@@ -269,19 +414,26 @@ class GameScene extends Phaser.Scene {
     this.currentQuestion = question;
     this.answerLocked = false;
     this.active = true;
-    this.roundDuration = this.roundIndex < 5 ? 18 : 14;
+    this.roundDuration = this.mode === 'draw' ? 22 : this.roundIndex < 5 ? 18 : 14;
     this.timeLeft = this.roundDuration;
     this.enemyProgress = 0;
     this.enemy.setPosition(GDC.W / 2, 460).setScale(1).setAlpha(1).setAngle(0);
     this.typeText.setText(question.type);
-    this.promptText.setY(question.region ? 228 : 260).setText(question.prompt);
-    this.hintText.setText(question.hint || '');
+    this.promptText.setY(this.isDrawingMode ? 238 : question.region ? 228 : 260).setText(question.prompt);
+    this.hintText.setText(this.isDrawingMode
+      ? 'Desenhe com o dedo ou mouse e toque em CONJURAR.'
+      : question.hint || '');
     this.hintText.setY(question.region ? 338 : 334);
     this.drawVenn(question.region);
-    question.options.forEach((option, index) => {
-      this.answerButtons[index].text.setText(option);
-      this.answerButtons[index].setButtonEnabled(true);
-    });
+    if (this.isDrawingMode) {
+      this.guideSymbolText.setText(question.symbol);
+      this.clearDrawing();
+    } else {
+      question.options.forEach((option, index) => {
+        this.answerButtons[index].text.setText(option);
+        this.answerButtons[index].setButtonEnabled(true);
+      });
+    }
     this.feedbackText.setText('');
     this.updateHud();
   }
@@ -308,29 +460,58 @@ class GameScene extends Phaser.Scene {
     if (!this.active || this.answerLocked) return;
     const selected = this.currentQuestion.options[optionIndex];
     if (selected === this.currentQuestion.answer) {
-      this.answerLocked = true;
-      this.active = false;
-      this.score += 100 + Math.floor(this.timeLeft * 4);
-      this.feedbackText.setColor(GDC.CSS.cyan).setText('ACERTOU! O feitico protegeu o castelo.');
-      this.answerButtons.forEach((button) => button.setButtonEnabled(false));
-      GDC.Audio.sfx(this, 'sfxClick');
-      this.tweens.add({
-        targets: this.enemy,
-        scale: 0.15,
-        alpha: 0,
-        angle: 90,
-        duration: 450,
-        ease: 'Back.easeIn',
-      });
-      this.updateHud();
-      this.time.delayedCall(750, () => {
-        this.roundIndex += 1;
-        this.startQuestion();
-      });
+      this.resolveCorrectAnswer();
       return;
     }
 
     this.missAnswer('Resposta incorreta. O inimigo avancou e o castelo perdeu uma vida.');
+  }
+
+  resolveCorrectAnswer() {
+    this.answerLocked = true;
+    this.active = false;
+    this.score += 100 + Math.floor(this.isTimedMode ? this.timeLeft * 4 : 0);
+    this.feedbackText.setColor(GDC.CSS.cyan).setText('ACERTOU! O feitico protegeu o castelo.');
+    this.answerButtons.forEach((button) => button.setButtonEnabled(false));
+    GDC.Audio.sfx(this, 'sfxClick');
+    this.spawnSpellBurst();
+    this.tweens.add({ targets: this.statusText, scale: 1.08, duration: 130, yoyo: true });
+    this.tweens.add({
+      targets: this.enemy,
+      scale: 0.15,
+      alpha: 0,
+      angle: 90,
+      duration: 450,
+      ease: 'Back.easeIn',
+    });
+    this.updateHud();
+    this.time.delayedCall(750, () => {
+      this.roundIndex += 1;
+      this.startQuestion();
+    });
+  }
+
+  spawnSpellBurst() {
+    const centerX = this.enemy.x;
+    const centerY = this.enemy.y;
+    for (let index = 0; index < 8; index += 1) {
+      const angle = Phaser.Math.DegToRad(index * 45);
+      const sparkle = this.add.image(centerX, centerY, index % 2 ? 'sparkle_small' : 'sparkle_big')
+        .setScale(0.08)
+        .setAlpha(0.9)
+        .setDepth(6);
+      this.tweens.add({
+        targets: sparkle,
+        x: centerX + Math.cos(angle) * 92,
+        y: centerY + Math.sin(angle) * 92,
+        scale: index % 2 ? 0.2 : 0.14,
+        alpha: 0,
+        angle: 150,
+        duration: 520,
+        ease: 'Cubic.easeOut',
+        onComplete: () => sparkle.destroy(),
+      });
+    }
   }
 
   missAnswer(message) {
@@ -354,6 +535,10 @@ class GameScene extends Phaser.Scene {
 
   update(_, delta) {
     if (!this.active) return;
+    if (!this.isTimedMode) {
+      this.enemy.setY(460 + this.enemyProgress * 118);
+      return;
+    }
     this.timeLeft -= delta / 1000;
     if (this.timeLeft <= 0) {
       this.timeLeft = 0;
@@ -368,12 +553,13 @@ class GameScene extends Phaser.Scene {
 
   updateHud() {
     this.statusText.setText(`VIDAS ${this.lives}     PONTOS ${String(this.score).padStart(4, '0')}`);
-    this.waveText.setText(`DESAFIO ${Math.min(this.roundIndex + 1, GDC_QUESTIONS.length)}/${GDC_QUESTIONS.length}`);
+    this.waveText.setText(`DESAFIO ${Math.min(this.roundIndex + 1, this.questions.length)}/${this.questions.length}`);
   }
 
   showEnd(victory) {
     this.active = false;
     this.answerLocked = true;
+    GDC.Audio.sfx(this, victory ? 'sfxVictory' : 'sfxBack');
     this.endOverlay = this.add.container(0, 0).setDepth(30);
     const shade = this.add.rectangle(GDC.W / 2, GDC.H / 2, GDC.W, GDC.H, 0x050713, 0.9).setInteractive();
     const card = this.add.rectangle(GDC.W / 2, 475, 488, 470, 0x151a3c, 1).setStrokeStyle(4, GDC.C.gold);
@@ -401,6 +587,7 @@ class GameScene extends Phaser.Scene {
   }
 
   goToMenu() {
+    GDC.Audio.sfx(this, 'sfxBack');
     GDC.UI.goTo(this, 'MenuScene');
   }
 }

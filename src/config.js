@@ -23,11 +23,12 @@ const GDC = {
   C: { indigo: 0x1B1F4B, violet: 0x5B3FA0, gold: 0xF2B84B, cyan: 0x4FD1E8, red: 0xE5484D, night: 0x0d0f26, slate: 0x2a2f6b },
   CSS: { indigo: '#1B1F4B', violet: '#5B3FA0', gold: '#F2B84B', cyan: '#4FD1E8', red: '#E5484D', soft: '#cfd8ff', dim: '#8a90b8' },
 
-  // Áudio: coloque o caminho do arquivo quando ele existir (mp3 ou ogg).
-  // Exemplo: musicMenu: 'assets/audio/music_menu.mp3'
   AUDIO: {
     musicMenu: null,
+    musicGame: null,
     sfxClick: null,
+    sfxBack: null,
+    sfxVictory: null,
   },
 
   videoFailed: false,
