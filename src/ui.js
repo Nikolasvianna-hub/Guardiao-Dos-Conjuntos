@@ -60,33 +60,67 @@ GDC.UI = {
     return scene.add.nineslice(x, y, 'panel', undefined, w, h, 130, 130, 110, 110);
   },
 
-  // Dialogo modal simples: titulo, corpo, botoes. Retorna container (destroy para fechar).
+  // Dialogo modal: titulo, corpo, botoes empilhados. Retorna container (destroy para fechar).
   dialog(scene, title, body, buttons, opts) {
     opts = opts || {};
     const { W, H } = GDC;
-    const cam = scene.cameras.main;
-    cam.stopFollow();
-    const c = scene.add.container(cam.scrollX, cam.scrollY).setDepth(opts.depth || 1100);
+    const c = scene.add.container(0, 0).setDepth(opts.depth || 1100);
     const shade = scene.add.rectangle(W / 2, H / 2, W, H, 0x050713, 0.82).setInteractive();
-    const pw = opts.width || 720, ph = opts.height || 430;
+    const pw = opts.width || 500, ph = opts.height || 600;
     const panel = this.panel(scene, W / 2, H / 2, pw, ph);
-    const head = this.title(scene, W / 2, H / 2 - ph / 2 + 88, title, 46);
-    const text = scene.add.text(W / 2, H / 2 + 6, body, {
-      fontFamily: GDC.FONT_BODY, fontSize: (opts.fontSize || 22) + 'px', color: GDC.CSS.cream,
-      align: 'center', lineSpacing: 6, wordWrap: { width: pw - 250 },
+    const headY = H / 2 - ph / 2 + 84;
+    const head = this.title(scene, W / 2, headY, title, opts.titleSize || 44);
+    const n = buttons.length, step = 62;
+    const lastY = H / 2 + ph / 2 - 84, firstY = lastY - (n - 1) * step;
+    const topY = headY + 44, botY = firstY - 40;
+    const text = scene.add.text(W / 2, (topY + botY) / 2, body, {
+      fontFamily: GDC.FONT_BODY, fontSize: (opts.fontSize || 20) + 'px', color: GDC.CSS.cream,
+      align: 'center', lineSpacing: 5, wordWrap: { width: pw - 170 },
     }).setOrigin(0.5);
     c.add([shade, panel, head, text]);
-    const n = buttons.length;
-    const bw = n > 1 ? 230 : 280;
     buttons.forEach((b, i) => {
-      const bx = W / 2 + (i - (n - 1) / 2) * (bw + 20);
-      const btn = this.button(scene, bx, H / 2 + ph / 2 - 88, b.label, {
-        width: bw, height: 54, fontSize: 22, onClick: () => { if (b.onClick) b.onClick(c, btn); },
+      const btn = this.button(scene, W / 2, firstY + i * step, b.label, {
+        width: 290, height: 52, fontSize: 22, onClick: () => { if (b.onClick) b.onClick(c, btn); },
       });
       c.add(btn);
     });
     c.bodyText = text;
     return c;
+  },
+
+  // Texturas do diagrama de Venn (desenhadas em canvas, usadas dentro dos baloes)
+  buildVenn(scene) {
+    const mk = (key, draw) => {
+      if (scene.textures.exists(key)) return;
+      const t = scene.textures.createCanvas(key, 160, 104), x = t.getContext();
+      x.lineJoin = 'round'; x.textAlign = 'center'; x.textBaseline = 'middle';
+      draw(x); t.refresh();
+    };
+    const circ = (x, cx, cy, r) => { x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.closePath(); };
+    const GOLD = '#F2B84B', INK = '#0a0618', CYAN = '#4FD1E8';
+    const label = (x, s, px, py) => { x.font = '24px "Lilita One", Arial'; x.lineWidth = 5; x.strokeStyle = '#FFF3D1'; x.fillStyle = '#1B1F4B'; x.strokeText(s, px, py); x.fillText(s, px, py); };
+    const outline = (x, cx, cy, r) => { circ(x, cx, cy, r); x.lineWidth = 4; x.strokeStyle = INK; x.stroke(); };
+    const two = (shade) => (x) => {
+      const a = [62, 52, 38], b = [98, 52, 38];
+      if (shade === 'union') { x.fillStyle = GOLD; circ(x, ...a); x.fill(); circ(x, ...b); x.fill(); }
+      if (shade === 'inter') { x.save(); circ(x, ...a); x.clip(); x.fillStyle = GOLD; circ(x, ...b); x.fill(); x.restore(); }
+      if (shade === 'diff') { x.fillStyle = GOLD; circ(x, ...a); x.fill(); x.fillStyle = '#FFF3D1'; circ(x, ...b); x.fill(); }
+      outline(x, ...a); outline(x, ...b);
+      label(x, 'A', 40, 52); label(x, 'B', 120, 52);
+    };
+    mk('venn_union', two('union')); mk('venn_inter', two('inter')); mk('venn_diff', two('diff'));
+    mk('venn_sub', (x) => {
+      const B = [80, 52, 46], A = [66, 52, 24];
+      x.fillStyle = 'rgba(79,209,232,0.35)'; circ(x, ...B); x.fill();
+      x.fillStyle = CYAN; circ(x, ...A); x.fill();
+      outline(x, ...B); outline(x, ...A);
+      label(x, 'A', 66, 52); label(x, 'B', 120, 30);
+    });
+    mk('venn_disj', (x) => {
+      const A = [42, 52, 30], B = [118, 52, 30];
+      outline(x, ...A); outline(x, ...B);
+      label(x, 'A', 42, 52); label(x, 'B', 118, 52);
+    });
   },
 
   goTo(scene, key, data) {

@@ -1,15 +1,12 @@
-# Roteiro de apresentação (5 a 10 minutos)
+# Roteiro da apresentação (terça-feira)
 
-Entrega no AVA até 23h59 de segunda-feira: slides + link do jogo (e QR code).
+1. **Abertura (30 s):** tema 2, Conjuntos. Equipe 4. Jogo "Guardião dos Conjuntos", inspirado no Magic Touch.
+2. **Critério 2, interações (1 min):** mostrar uma fase: o aluno lê o balão e desenha o símbolo. Cada fase tem 8 a 12 interações, bem mais que as 5 exigidas.
+3. **Critério 3, tutorial (30 s):** fase 1 começa com "Como jogar" e um traço-guia animado que mostra como desenhar cada símbolo. Botão ? em qualquer fase.
+4. **Critério 4, enredo (30 s):** o Paradoxo solta servos em balões sobre a Torre dos Elementos. O Guardião responde desenhando símbolos.
+5. **Critério 5, conteúdo (1 min):** glossário (∪ ∩ ∈ ⊂ ∅), Venn, cardinalidade e inclusão e exclusão. Gabarito gerado por código e provado por teste (166 mil desafios verificados).
+6. **Feedback (30 s):** acerto com explosão, pontos, combo e som; erro com tremor, flash vermelho, som e o símbolo que o jogo entendeu.
+7. **Demonstração pública (1 min):** QR code e link do GitHub Pages. Funciona no celular, em pé.
+8. **Encerramento (30 s):** próximos passos (AV3: teste de usabilidade).
 
-| Critério do professor | O que mostrar |
-|---|---|
-| 1. Entrega | Link do GitHub Pages e QR code nos slides. |
-| 2. Interações (mínimo 5) | A tela de resultado de cada fase mostra "Interações com o conteúdo". Cada fase tem mais de 5 (coletar elemento, pisar em pedra, golpear o chefe). |
-| 3. Instruções | Tela COMO JOGAR no menu + Fase 1 tutorial (andar, pular, conjurar) + botão (?) de dica em toda fase. |
-| 4. Enredo | `docs/enredo.md` e as 4 telas de história ao tocar em JOGAR. |
-| 5. Conteúdo matemático | `docs/gabarito.md` e o teste `node tests/test_mathgen.js` (0 falhas). |
-| 6. Apresentação do projeto | Slides: problema, público (ensino médio), mecânica, fases, enredo, gabarito, desafios técnicos. |
-| 7. Apresentação do jogo | Abrir pelo link, no celular, com `?all=1` para pular direto à fase 3 ou ao chefe. |
-
-Sugestão de ordem (8 min): 1 min contexto, 2 min enredo e público, 2 min mecânicas e matemática, 3 min jogo ao vivo (fase 2 e chefe), 1 min desafios técnicos e próximos passos.
+Antes de apresentar: abrir o link no celular, testar o som e desenhar um símbolo de cada tipo.
