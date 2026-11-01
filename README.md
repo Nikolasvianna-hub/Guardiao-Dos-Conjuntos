@@ -20,35 +20,35 @@
 
 **Guardião dos Conjuntos** é um jogo desenvolvido como **Projeto Aplicado** da disciplina de Matemática Discreta, no curso de **Análise e Desenvolvimento de Sistemas** da **Universidade de Fortaleza (UNIFOR)**, semestre **2026.2**.
 
-A ideia é facilitar o aprendizado de matemática para jovens em ambientes escolares, transformando o estudo de conjuntos em uma experiência lúdica, acessível e envolvente. O jogo roda direto no navegador, sem instalação, e funciona em computador e celular.
+A ideia é facilitar o aprendizado de matemática para jovens em ambientes escolares, transformando o estudo de conjuntos em uma aventura de plataforma 2D com visual de desenho animado. A matemática é a **mecânica**: portas, pontes e chefe dependem de conjuntos. O jogo roda direto no navegador, sem instalação, em computador e celular (em paisagem).
 
 ## 📚 Conteúdo matemático
 
-O jogo trabalha cardinalidade, princípio da inclusão e exclusão com dois e três conjuntos, regiões de diagramas de Venn e problemas contextualizados.
+O jogo trabalha pertinência, cardinalidade, união, interseção, diferença, complemento, regiões de diagramas de Venn e o princípio da inclusão e exclusão com dois e três conjuntos.
 
-O gabarito completo das questões está em [`docs/gabarito.md`](docs/gabarito.md).
+Os números de cada desafio são gerados por código e provados por teste (`node tests/test_mathgen.js`). Veja [`docs/gabarito.md`](docs/gabarito.md).
 
 ## 🧙 Enredo
 
-O Guardião protege o Reino dos Conjuntos e o Grande Diagrama de Venn. O Paradoxo envia criaturas com enigmas matemáticos para apagar a ordem do reino; cada resposta correta transforma-se em um feitiço que impede o avanço da invasão.
+O Guardião, mestre da contagem, protege o Reino dos Conjuntos. O Paradoxo, um olho faminto de contradições, embaralhou os elementos e trancou os portais. Para restaurar a ordem, o Guardião atravessa 5 regiões usando conjuntos como magia.
 
 Versão completa em [`docs/enredo.md`](docs/enredo.md).
 
 ## 🕹️ Como jogar
 
-1. Abra o [link do jogo](https://nikolasvianna-hub.github.io/Guardiao-Dos-Conjuntos/).
-2. No menu, escolha **Jogar** e selecione um modo: quiz com tempo, quiz sem tempo ou desenho de símbolos.
-3. Nos quizzes, toque ou clique na resposta. No modo de desenho, trace `U` para união ou `∩` para interseção e selecione **Conjurar**.
-4. Respostas erradas custam uma vida; no modo com tempo, deixar o cronômetro acabar também custa uma vida. Proteja o castelo e complete os desafios para vencer.
+1. Abra o [link do jogo](https://nikolasvianna-hub.github.io/Guardiao-Dos-Conjuntos/) (no celular, gire para paisagem).
+2. Toque em **Jogar** e acompanhe a história.
+3. Em cada fase, resolva o desafio de conjuntos e entre no portal. 5 fases: cardinalidade, pontes de Venn, inclusão e exclusão (2 e 3 conjuntos) e o chefe.
+4. Erros custam um coração. Perdeu todos? A fase recomeça com números novos.
 
-As instruções detalhadas estão em [`docs/instrucoes.md`](docs/instrucoes.md).
+| Ação | Teclado | Celular |
+| --- | --- | --- |
+| Andar | setas / A D | ◀ ▶ |
+| Pular | espaço / ↑ | ▲ |
+| Conjurar | Z / X | ✦ |
+| Dica | ícone (?) | ícone (?) |
 
-| Controle | Ação |
-| --- | --- |
-| Toque / clique | Escolhe uma resposta ou botão |
-| Dedo / mouse no modo de desenho | Traça o símbolo dentro da área indicada |
-| **Conjurar** / **Limpar** | Confirma ou apaga o traço |
-| **Opções** | Liga e desliga música e efeitos sonoros |
+Instruções completas em [`docs/instrucoes.md`](docs/instrucoes.md). Roteiro da apresentação em [`docs/roteiro_apresentacao.md`](docs/roteiro_apresentacao.md).
 
 ## 👥 Equipe
 
@@ -64,19 +64,21 @@ As instruções detalhadas estão em [`docs/instrucoes.md`](docs/instrucoes.md).
 ```
 .
 ├── .github/workflows/   # publicação automática no GitHub Pages
-├── data/                # banco de questões
 ├── docs/
-│   ├── slides/          # slides da apresentação
-│   ├── av3-feedback/    # resultados dos testes de usabilidade
 │   ├── enredo.md
 │   ├── instrucoes.md
-│   └── gabarito.md
+│   ├── gabarito.md
+│   └── roteiro_apresentacao.md
+├── tests/               # prova do gabarito (node tests/test_mathgen.js)
 ├── src/                 # código-fonte do jogo (esta pasta é publicada)
 │   ├── index.html
-│   ├── assets/img/      # imagens e sprites
+│   ├── assets/img/      # desenhos (estilo desenho animado anos 30)
 │   ├── fonts/
 │   ├── lib/             # Phaser
-│   └── scenes/          # cenas do jogo
+│   ├── scenes/          # Boot, Menu, História, Seleção de fases, Plataforma
+│   ├── levels.js        # as 5 fases e suas mecânicas
+│   ├── mathgen.js       # gerador de desafios e gabarito
+│   └── controls.js      # teclado, gamepad e botões de toque
 └── README.md
 ```
 
@@ -100,9 +102,9 @@ Depois abra `http://localhost:8000` no navegador.
 
 ## 🧪 Teste de usabilidade (AV3)
 
-Os resultados e melhorias feitas a partir do feedback dos usuários serão documentados em [`docs/av3-feedback/`](docs/av3-feedback/).
+Os resultados e melhorias feitas a partir do feedback dos usuários serão documentados em `docs/av3-feedback/` (a criar na AV3).
 
 ## 📄 Créditos e licenças
 
-- Fonte **Press Start 2P** sob licença OFL (veja [`src/fonts/OFL.txt`](src/fonts/OFL.txt))
+- Fontes **Mouse Memoirs** e **Lilita One** sob licença OFL (veja `src/fonts/OFL-*.txt`)
 - **Phaser** sob licença MIT

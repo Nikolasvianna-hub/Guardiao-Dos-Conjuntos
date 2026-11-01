@@ -1,176 +1,101 @@
+/* Menu principal em paisagem: torre ilustrada ao fundo, mago e botoes */
 class MenuScene extends Phaser.Scene {
   constructor() { super('MenuScene'); }
 
   create() {
     const { W, H } = GDC;
+    this.cameras.main.fadeIn(350, 10, 6, 24);
+    const sc = 1.32;
+    const bg = this.add.image(W / 2, 270 - 385 * sc, 'bg_tower').setOrigin(0.5, 0).setScale(sc);
+    this.tweens.add({ targets: bg, x: W / 2 + 14, duration: 9000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.add.rectangle(W / 2, H / 2, W, H, 0x0d0f26, 0.22);
+    // vinheta nas bordas para dar leitura aos botoes
+    const vg = this.add.graphics();
+    vg.fillGradientStyle(0x0d0f26, 0x0d0f26, 0x0d0f26, 0x0d0f26, 0, 0.8, 0, 0.8).fillRect(W - 360, 0, 360, H);
+    vg.fillGradientStyle(0x0d0f26, 0x0d0f26, 0x0d0f26, 0x0d0f26, 0.7, 0, 0.7, 0).fillRect(0, 0, 340, H);
 
-    // fundo cobrindo a tela
-    const bg = this.add.image(W / 2, H / 2, 'menu_scene');
-    bg.setScale(Math.max(W / bg.width, H / bg.height));
-    const s = bg.scaleX;
-    this.tweens.add({
-      targets: bg,
-      scaleX: s * 1.035,
-      scaleY: s * 1.035,
-      duration: 12000,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
+    this.sparkles();
 
-    // mago em cima do penhasco, à esquerda da torre
-    const wiz = this.add.image(
-      W / 2 + (135 - bg.width / 2) * s,
-      H / 2 + (536 - bg.height / 2) * s,
-      'wizard_idle'
-    ).setOrigin(0.5, 1);
-    wiz.setScale((130 / wiz.height) * s);
-    this.tweens.add({
-      targets: wiz,
-      y: wiz.y - 7,
-      duration: 1800,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
-    this.tweens.add({
-      targets: wiz,
-      scaleY: wiz.scaleY * 1.025,
-      duration: 1500,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
+    const emblem = this.add.image(170, 105, 'emblem').setScale(0.38);
+    this.tweens.add({ targets: emblem, y: 99, scale: 0.395, duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    const title = GDC.UI.title(this, 170, 262, 'GUARDIÃO\nDOS CONJUNTOS', 62).setAlpha(0).setAngle(-3);
+    this.tweens.add({ targets: title, alpha: 1, angle: -2, duration: 700, ease: 'Back.easeOut' });
 
-    const title = GDC.UI.title(this, W / 2, 62, 'GUARDIÃO\nDOS CONJUNTOS', 26);
-    title.setAlpha(0).setY(78);
-    this.tweens.add({ targets: title, alpha: 1, y: 62, duration: 700, ease: 'Cubic.easeOut' });
-    this.createSparkles();
-    GDC.Audio.playMusic(this, 'musicMenu');
+    // mago respirando (animacao de borracha: estica e amassa)
+    const wiz = this.add.image(120, 545, 'wizard_idle').setOrigin(0.5, 1);
+    const ws = 215 / wiz.height; wiz.setScale(ws);
+    this.tweens.add({ targets: wiz, scaleY: ws * 1.03, scaleX: ws * 0.985, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: wiz, angle: 1.2, duration: 2100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    const eye = this.add.image(238, 480, 'paradox').setScale(0.2).setAlpha(0.9);
+    this.tweens.add({ targets: eye, y: 470, angle: 6, duration: 1700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+
+    GDC.Audio.playMusic(this, 'menu');
 
     const items = [
-      ['JOGAR', 'icon_play'], ['OPÇÕES', 'icon_gear'],
-      ['ESTUDOS', 'icon_book'], ['SAIR', 'icon_door'],
+      ['JOGAR', 'icon_play', () => this.play()],
+      ['COMO JOGAR', 'icon_help', () => this.howTo()],
+      ['ESTUDOS', 'icon_book', () => this.studies()],
+      ['OPÇÕES', 'icon_gear', () => this.options()],
     ];
-    items.forEach(([label, icon], i) => {
-      const targetY = 600 + i * 96;
-      const button = GDC.UI.button(this, W / 2, targetY + 28, label, {
-        icon: icon,
-        onClick: () => {
-          if (i === 0) GDC.UI.goTo(this, 'ModeSelectScene');
-          if (i === 1) this.showOptions();
-          if (i === 2) this.showStudies();
-          if (i === 3) this.showExit();
-        },
-      });
-      button.setAlpha(0);
-      this.tweens.add({
-        targets: button,
-        y: targetY,
-        alpha: 1,
-        duration: 450,
-        delay: 220 + i * 110,
-        ease: 'Back.easeOut',
-      });
+    if (GDC.SHOW_QUIT) items.push(['SAIR', 'icon_door', () => this.quit()]);
+    items.forEach(([label, icon, fn], i) => {
+      const b = GDC.UI.button(this, W - 190, 150 + i * 74 + 40, label, { icon, width: 300, height: 58, fontSize: 28, onClick: fn });
+      b.setAlpha(0);
+      this.tweens.add({ targets: b, y: 150 + i * 74, alpha: 1, duration: 450, delay: 200 + i * 100, ease: 'Back.easeOut' });
+    });
+    this.add.text(W - 10, H - 8, 'Matemática Discreta · UNIFOR · Equipe 4', { fontFamily: GDC.FONT_BODY, fontSize: '14px', color: GDC.CSS.dim }).setOrigin(1, 1);
+  }
+
+  play() {
+    const d = GDC.Settings.data;
+    const fresh = d.unlocked <= 1 && Object.keys(d.stars).length === 0;
+    GDC.UI.goTo(this, fresh ? 'StoryScene' : 'LevelSelectScene');
+  }
+
+  sparkles() {
+    this.add.particles(0, 0, 'spark_small', {
+      x: { min: 0, max: GDC.W }, y: { min: 100, max: GDC.H }, lifespan: 4000,
+      speedY: { min: -24, max: -55 }, scale: { start: 0.3, end: 0 }, alpha: { start: 0.7, end: 0 },
+      frequency: 200, blendMode: 'ADD',
     });
   }
 
-  createSparkles() {
-    const positions = [[60, 270], [460, 315], [385, 130], [70, 470], [465, 525]];
-    positions.forEach(([x, y], index) => {
-      const sparkle = this.add.image(x, y, index % 2 ? 'sparkle_small' : 'sparkle_big')
-        .setScale(index % 2 ? 0.18 : 0.12)
-        .setAlpha(0.12);
-      this.tweens.add({
-        targets: sparkle,
-        y: y - 16,
-        alpha: 0.72,
-        angle: 45,
-        duration: 1500 + index * 180,
-        delay: index * 230,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut',
-      });
-    });
+  howTo() {
+    this.showDialog('COMO JOGAR',
+      'Você é o Guardião. Atravesse as ilhas, recupere os elementos dos conjuntos e abra os portais.\n\n' +
+      'Andar: setas ou A / D     Pular: espaço ou ↑     Conjurar: Z ou X\n' +
+      'No celular: botões ◀ ▶ ▲ ✦ na tela (gire o aparelho).\n\n' +
+      'Cada fase tem um desafio de conjuntos. Erros custam um coração, e o botão (?) dá dicas.',
+      [{ label: 'ENTENDI', onClick: (c) => c.destroy() }], { height: 520, width: 860, fontSize: 20 });
   }
 
-  showOptions() {
-    this.showPanel('OPÇÕES', 'Som e música podem ser ligados ou desligados. As escolhas ficam salvas neste aparelho.', [
-      {
-        label: `EFEITOS: ${GDC.Settings.data.sfx ? 'LIGADOS' : 'DESLIGADOS'}`,
-        soundKey: 'sfxClick',
-        onClick: (button) => {
-          GDC.Settings.data.sfx = !GDC.Settings.data.sfx;
-          GDC.Settings.save();
-          button.setLabel(`EFEITOS: ${GDC.Settings.data.sfx ? 'LIGADOS' : 'DESLIGADOS'}`);
-        },
-      },
-      {
-        label: `MÚSICA: ${GDC.Settings.data.music ? 'LIGADA' : 'DESLIGADA'}`,
-        soundKey: 'sfxClick',
-        onClick: (button) => {
-          GDC.Settings.data.music = !GDC.Settings.data.music;
-          GDC.Settings.save();
-          GDC.Audio.apply();
-          button.setLabel(`MÚSICA: ${GDC.Settings.data.music ? 'LIGADA' : 'DESLIGADA'}`);
-        },
-      },
-    ]);
+  studies() {
+    this.showDialog('ESTUDOS',
+      'Cardinalidade: |A| é a quantidade de elementos de A.\n' +
+      'União A ∪ B: elementos em A ou em B.   Interseção A ∩ B: elementos nos dois.\n' +
+      'Diferença A − B: em A mas não em B.   Complemento Aᶜ: fora de A.\n\n' +
+      '|A∪B| = |A| + |B| − |A∩B|\n' +
+      '|A∪B∪C| = |A|+|B|+|C| − |A∩B| − |A∩C| − |B∩C| + |A∩B∩C|',
+      [{ label: 'VOLTAR', onClick: (c) => c.destroy() }], { height: 520, width: 880, fontSize: 20 });
   }
 
-  showStudies() {
-    this.showPanel('GUIA DE ESTUDOS', [
-      'CARDINALIDADE: conte os elementos do conjunto.',
-      'DOIS CONJUNTOS: |A uniao B| = |A| + |B| - |A intersecao B|.',
-      'TRES CONJUNTOS: some os tamanhos, subtraia as intersecoes duas a duas e some a intersecao tripla.',
-      'VENN: A intersecao B e a parte comum; A intersecao B complementar fica em A, fora de B.',
-    ].join('\n\n'), []);
+  options() {
+    const s = GDC.Settings.data;
+    const lab = (n, v) => `${n}: ${v ? 'LIGADO' : 'LIGADA'}`;
+    this.showDialog('OPÇÕES', 'As escolhas ficam salvas neste aparelho.', [
+      { label: lab('EFEITOS', s.sfx), onClick: (c, b) => { s.sfx = !s.sfx; GDC.Settings.save(); b.setLabel(lab('EFEITOS', s.sfx)); } },
+      { label: lab('MÚSICA', s.music), onClick: (c, b) => { s.music = !s.music; GDC.Settings.save(); b.setLabel(lab('MÚSICA', s.music)); } },
+      { label: 'VOLTAR', onClick: (c) => c.destroy() },
+    ], { height: 400, width: 880 });
   }
 
-  showExit() {
-    this.showPanel('SAIR DO JOGO', 'O jogo fica aberto nesta aba. Feche a página do navegador quando quiser sair.', []);
+  quit() {
+    this.showDialog('SAIR?', 'O navegador não deixa o jogo fechar a aba. Pode fechar quando quiser, o progresso fica salvo.',
+      [{ label: 'VOLTAR', onClick: (c) => c.destroy() }], { height: 400, width: 800 });
   }
 
-  showPanel(title, body, actions) {
-    const { W, H } = GDC;
-    if (this.panel) this.panel.destroy(true);
-    this.panel = this.add.container(0, 0).setDepth(10);
-    const shade = this.add.rectangle(W / 2, H / 2, W, H, 0x050713, 0.88).setInteractive();
-    const card = this.add.rectangle(W / 2, H / 2, 492, 630, 0x151a3c, 1).setStrokeStyle(4, GDC.C.gold);
-    const heading = GDC.UI.title(this, W / 2, 205, title, 18);
-    const content = this.add.text(W / 2, 385, body, {
-      fontFamily: GDC.FONT_BODY,
-      fontSize: '19px',
-      color: '#ffffff',
-      align: 'center',
-      lineSpacing: 7,
-      wordWrap: { width: 410 },
-    }).setOrigin(0.5);
-    this.panel.add([shade, card, heading, content]);
-
-    const positions = actions.length > 1 ? [490, 585] : [575];
-    actions.forEach((action, index) => {
-      const button = GDC.UI.button(this, W / 2, positions[index], action.label, {
-        width: 390,
-        height: 74,
-        fontSize: 13,
-        onClick: () => action.onClick(button),
-      });
-      this.panel.add(button);
-    });
-
-    const close = GDC.UI.button(this, W / 2, 720, 'VOLTAR', {
-      width: 300,
-      height: 68,
-      fontSize: 13,
-      icon: 'icon_close',
-      soundKey: 'sfxBack',
-      onClick: () => {
-        this.panel.destroy(true);
-        this.panel = null;
-      },
-    });
-    this.panel.add(close);
+  showDialog(title, body, buttons, opts) {
+    if (this.dlg) this.dlg.destroy();
+    this.dlg = GDC.UI.dialog(this, title, body, buttons, opts);
   }
 }

@@ -1,104 +1,97 @@
-/* Componentes de interface reutilizáveis (botões, títulos, troca de cena) */
+/* Componentes de interface no estilo "desenho animado anos 30":
+   contorno preto grosso, ouro e roxo, cantos arredondados. */
 GDC.UI = {
-  // Texto de título em fonte pixel, dourado com contorno índigo
   title(scene, x, y, text, size) {
     return scene.add.text(x, y, text, {
-      fontFamily: GDC.FONT,
-      fontSize: (size || 24) + 'px',
-      color: GDC.CSS.gold,
-      stroke: GDC.CSS.indigo,
-      strokeThickness: Math.max(4, Math.round((size || 24) / 4)),
-      align: 'center',
-      lineSpacing: 10,
-    }).setOrigin(0.5);
+      fontFamily: GDC.FONT, fontSize: (size || 48) + 'px', color: GDC.CSS.gold,
+      stroke: GDC.CSS.ink, strokeThickness: Math.max(6, Math.round((size || 48) / 6)),
+      align: 'center', lineSpacing: -4,
+    }).setOrigin(0.5).setShadow(0, 5, '#0a0618', 0, true, true);
   },
 
-  // Botão grande de pedra e ouro (9 fatias, estica sem deformar os cantos)
-  // opts: width, height, icon, fontSize, onClick
+  text(scene, x, y, str, size, color, opts) {
+    return scene.add.text(x, y, str, Object.assign({
+      fontFamily: GDC.FONT_BODY, fontSize: (size || 20) + 'px', color: color || GDC.CSS.cream,
+      stroke: GDC.CSS.ink, strokeThickness: Math.max(3, Math.round((size || 20) / 6)), align: 'center',
+    }, opts || {})).setOrigin(0.5);
+  },
+
+  // fundo de botao desenhado em codigo (tinta preta + ouro + roxo)
+  drawBlob(g, w, h, fill, stroke) {
+    g.clear();
+    g.fillStyle(GDC.C.ink, 1).fillRoundedRect(-w / 2 - 5, -h / 2 - 3, w + 10, h + 12, 20);
+    g.fillStyle(stroke || GDC.C.gold, 1).fillRoundedRect(-w / 2, -h / 2, w, h + 4, 17);
+    g.fillStyle(fill || GDC.C.violet, 1).fillRoundedRect(-w / 2 + 5, -h / 2 + 5, w - 10, h - 6, 13);
+    g.fillStyle(0xffffff, 0.16).fillRoundedRect(-w / 2 + 12, -h / 2 + 8, w - 24, h * 0.28, 8);
+  },
+
   button(scene, x, y, label, opts) {
     opts = opts || {};
-    const w = opts.width || 330;
-    const h = opts.height || 80;
-    const s = 0.30;
+    const w = opts.width || 300, h = opts.height || 62;
     const c = scene.add.container(x, y);
-    const bg = scene.add.nineslice(0, 0, 'btn_normal', undefined, w / s, h / s, 56, 56, 56, 56).setScale(s);
-    c.add(bg);
-
+    const g = scene.add.graphics();
+    this.drawBlob(g, w, h, opts.fill, opts.stroke);
+    c.add(g);
+    let tx = 0;
     if (opts.icon) {
-      const icon = scene.add.image(-w / 2 + 46, 0, opts.icon);
-      icon.setScale((h * 0.58) / icon.height);
-      c.add(icon);
+      const ic = scene.add.image(-w / 2 + h * 0.62, 0, opts.icon);
+      ic.setScale((h * 0.92) / ic.height); c.add(ic); tx = h * 0.36;
     }
-    const text = scene.add.text(opts.icon ? 28 : 0, 0, label, {
-      fontFamily: GDC.FONT,
-      fontSize: (opts.fontSize || 16) + 'px',
-      color: GDC.CSS.gold,
-      stroke: GDC.CSS.indigo,
-      strokeThickness: 5,
+    const t = scene.add.text(tx, 0, label, {
+      fontFamily: GDC.FONT_BODY, fontSize: (opts.fontSize || 26) + 'px', color: GDC.CSS.cream,
+      stroke: GDC.CSS.ink, strokeThickness: 5,
     }).setOrigin(0.5);
-    c.add(text);
-
+    c.add(t);
+    const hit = scene.add.rectangle(0, 0, w + 10, h + 10, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+    c.add(hit);
     let enabled = true;
-    bg.setInteractive({
-      hitArea: new Phaser.Geom.Rectangle(0, 0, w / s, h / s),
-      hitAreaCallback: Phaser.Geom.Rectangle.Contains,
-      useHandCursor: true,
-    });
-    const grow = (v) => scene.tweens.add({ targets: c, scale: v, duration: 80 });
-    bg.on('pointerover', () => { if (!enabled) return; text.setColor(GDC.CSS.cyan); grow(1.04); });
-    bg.on('pointerout', () => { text.setColor(GDC.CSS.gold); bg.clearTint(); grow(1); });
-    bg.on('pointerdown', () => {
-      if (!enabled) return;
-      bg.setTint(0xaaaaaa);
-      c.setScale(0.96);
-      GDC.Audio.sfx(scene, opts.soundKey || 'sfxClick');
-    });
-    bg.on('pointerup', () => {
-      if (!enabled) return;
-      bg.clearTint();
-      c.setScale(1.04);
-      if (opts.onClick) opts.onClick();
-    });
-
-    c.setEnabled = (v) => {
-      enabled = v;
-      c.setAlpha(v ? 1 : 0.5);
-      if (v) bg.setInteractive(); else bg.disableInteractive();
-      if (v) {
-        bg.setInteractive({
-          hitArea: new Phaser.Geom.Rectangle(0, 0, w / s, h / s),
-          hitAreaCallback: Phaser.Geom.Rectangle.Contains,
-          useHandCursor: true,
-        });
-      }
-    };
-    c.setLabel = (t) => text.setText(t);
-    return c;
-  },
-
-  // Botão pequeno retangular (setas, mais/menos, ligado/desligado)
-  smallButton(scene, x, y, w, h, label, onClick, fontSize) {
-    const c = scene.add.container(x, y);
-    const r = scene.add.rectangle(0, 0, w, h, GDC.C.slate).setStrokeStyle(3, GDC.C.gold);
-    const t = scene.add.text(0, 0, label, {
-      fontFamily: GDC.FONT,
-      fontSize: (fontSize || 14) + 'px',
-      color: GDC.CSS.gold,
-    }).setOrigin(0.5);
-    c.add([r, t]);
-    r.setInteractive({ useHandCursor: true });
-    r.on('pointerover', () => r.setFillStyle(0x3a4090));
-    r.on('pointerout', () => r.setFillStyle(GDC.C.slate));
-    r.on('pointerdown', () => { r.setFillStyle(0x4a52b0); GDC.Audio.sfx(scene, 'sfxClick'); });
-    r.on('pointerup', () => { r.setFillStyle(0x3a4090); if (onClick) onClick(); });
+    hit.on('pointerover', () => { if (enabled) scene.tweens.add({ targets: c, scale: 1.05, duration: 90 }); });
+    hit.on('pointerout', () => scene.tweens.add({ targets: c, scale: 1, duration: 90 }));
+    hit.on('pointerdown', () => { if (!enabled) return; c.setScale(0.95); GDC.Audio.sfx(scene, opts.sound || 'click'); });
+    hit.on('pointerup', () => { if (!enabled) return; c.setScale(1.05); if (opts.onClick) opts.onClick(c); });
+    c.setEnabled = (v) => { enabled = v; c.setAlpha(v ? 1 : 0.5); };
     c.setLabel = (s) => t.setText(s);
+    c.w = w; c.h = h;
     return c;
   },
 
-  // Troca de cena com fade
+  // painel ilustrado (moldura de pedra e ouro, 9 fatias)
+  panel(scene, x, y, w, h) {
+    return scene.add.nineslice(x, y, 'panel', undefined, w, h, 130, 130, 110, 110);
+  },
+
+  // Dialogo modal simples: titulo, corpo, botoes. Retorna container (destroy para fechar).
+  dialog(scene, title, body, buttons, opts) {
+    opts = opts || {};
+    const { W, H } = GDC;
+    const cam = scene.cameras.main;
+    cam.stopFollow();
+    const c = scene.add.container(cam.scrollX, cam.scrollY).setDepth(opts.depth || 1100);
+    const shade = scene.add.rectangle(W / 2, H / 2, W, H, 0x050713, 0.82).setInteractive();
+    const pw = opts.width || 720, ph = opts.height || 430;
+    const panel = this.panel(scene, W / 2, H / 2, pw, ph);
+    const head = this.title(scene, W / 2, H / 2 - ph / 2 + 88, title, 46);
+    const text = scene.add.text(W / 2, H / 2 + 6, body, {
+      fontFamily: GDC.FONT_BODY, fontSize: (opts.fontSize || 22) + 'px', color: GDC.CSS.cream,
+      align: 'center', lineSpacing: 6, wordWrap: { width: pw - 250 },
+    }).setOrigin(0.5);
+    c.add([shade, panel, head, text]);
+    const n = buttons.length;
+    const bw = n > 1 ? 230 : 280;
+    buttons.forEach((b, i) => {
+      const bx = W / 2 + (i - (n - 1) / 2) * (bw + 20);
+      const btn = this.button(scene, bx, H / 2 + ph / 2 - 88, b.label, {
+        width: bw, height: 54, fontSize: 22, onClick: () => { if (b.onClick) b.onClick(c, btn); },
+      });
+      c.add(btn);
+    });
+    c.bodyText = text;
+    return c;
+  },
+
   goTo(scene, key, data) {
     const cam = scene.cameras.main;
-    cam.fadeOut(250, 0, 0, 0);
+    cam.fadeOut(260, 10, 6, 24);
     cam.once('camerafadeoutcomplete', () => scene.scene.start(key, data));
   },
 };

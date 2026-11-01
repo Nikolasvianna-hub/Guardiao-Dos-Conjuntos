@@ -1,116 +1,71 @@
-/* Música e efeitos. Se o arquivo de áudio não existir, simplesmente não toca. */
+/* Musica e efeitos gerados no navegador (sem arquivos de audio, tudo leve).
+   Trilha em suingue estilo anos 30, combinando com o visual de desenho animado. */
 GDC.Audio = {
-  music: null,
-  musicKey: null,
-  musicEvent: null,
-  musicOwner: null,
-  musicStep: 0,
+  musicEvent: null, musicKey: null, step: 0,
 
   playMusic(scene, key) {
-    if (!scene.cache.audio.exists(key)) {
-      if (this.musicKey === key && this.musicEvent && this.musicOwner === scene) return;
-      if (this.music) {
-        this.music.stop();
-        this.music.destroy();
-        this.music = null;
+    if (this.musicKey === key && this.musicEvent) return;
+    if (this.musicEvent) this.musicEvent.remove();
+    this.musicKey = key; this.step = 0;
+    const lead = key === 'game'
+      ? [440, 523.25, 659.25, 523.25, 392, 493.88, 587.33, 493.88, 440, 523.25, 659.25, 783.99, 659.25, 587.33, 523.25, 392]
+      : [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880, 698.46, 523.25, 659.25, 783.99, 1046.5, 987.77, 783.99, 659.25, 587.33];
+    const bass = key === 'game' ? [110, 146.83, 98, 130.81] : [130.81, 174.61, 110, 146.83];
+    this.snd = scene.sound;
+    const tick = () => {
+      if (this.musicKey !== key) return;
+      const ctxScene = { sound: this.snd };
+      const s = GDC.Settings.data;
+      if (s.music) {
+        const i = this.step % lead.length;
+        this.tone(ctxScene, lead[i], 0.16, 'triangle', 0.05 * s.master);
+        if (i % 2 === 0) this.tone(ctxScene, bass[Math.floor(i / 4) % bass.length], 0.22, 'sine', 0.07 * s.master);
+        if (i % 4 === 2) this.tone(ctxScene, lead[i] / 2, 0.08, 'square', 0.012 * s.master);
       }
-      if (this.musicEvent) this.musicEvent.remove();
-      this.musicKey = key;
-      this.musicOwner = scene;
-      this.musicStep = 0;
-      const menus = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880, 698.46,
-        523.25, 659.25, 783.99, 1046.5, 987.77, 783.99, 659.25, 587.33];
-      const game = [392, 493.88, 587.33, 493.88, 349.23, 440, 523.25, 440,
-        392, 493.88, 587.33, 698.46, 659.25, 587.33, 493.88, 440];
-      const melody = key === 'musicGame' ? game : menus;
-      const bass = key === 'musicGame' ? [98, 130.81, 87.31, 110] : [130.81, 174.61, 110, 146.83];
-      this.musicEvent = scene.time.addEvent({
-        delay: 210,
-        loop: true,
-        callback: () => {
-          if (!GDC.Settings.data.music) return;
-          const step = this.musicStep % melody.length;
-          this.playTone(scene, melody[step], 0.045, key === 'musicGame' ? 'triangle' : 'square', 0.035 * GDC.Settings.data.master);
-          if (step % 4 === 0) this.playTone(scene, bass[Math.floor(step / 4) % bass.length], 0.055, 'triangle', 0.045 * GDC.Settings.data.master);
-          this.musicStep += 1;
-        },
-      });
-      return;
-    }
-    if (this.musicEvent) {
-      this.musicEvent.remove();
-      this.musicEvent = null;
-    }
-    this.musicOwner = scene;
-    if (this.music && this.musicKey === key) { this.apply(); return; }
-    const previous = this.music;
-    this.music = scene.sound.add(key, { loop: true, volume: 0 });
-    this.musicKey = key;
-    this.music.play();
-    scene.tweens.add({
-      targets: this.music,
-      volume: GDC.Settings.data.music ? GDC.Settings.data.master * 0.35 : 0,
-      duration: 450,
-    });
-    if (previous) {
-      scene.tweens.add({
-        targets: previous,
-        volume: 0,
-        duration: 300,
-        onComplete: () => { previous.stop(); previous.destroy(); },
-      });
-    }
+      this.step++;
+      // suingue: tempos longo e curto alternados
+      this.musicEvent = { remove: ((id) => () => clearTimeout(id))(setTimeout(tick, this.step % 2 ? 240 : 150)) };
+    };
+    this.musicEvent = { remove: ((id) => () => clearTimeout(id))(setTimeout(tick, 100)) };
   },
+  stop() { if (this.musicEvent) this.musicEvent.remove(); this.musicEvent = null; this.musicKey = null; },
+  apply() { /* a musica le GDC.Settings a cada nota */ },
 
-  apply() {
-    const s = GDC.Settings.data;
-    const m = this.music;
-    if (!m) return;
-    m.setVolume(s.music ? s.master * 0.35 : 0);
-    if (s.music) {
-      if (m.isPaused) m.resume();
-      else if (!m.isPlaying) m.play();
-    } else if (m.isPlaying) {
-      m.pause();
-    }
+  SFX: {
+    click:   [[659.25, 0.07, 'triangle']],
+    back:    [[440, 0.07, 'triangle'], [329.63, 0.09, 'triangle']],
+    jump:    [[392, 0.07, 'sine'], [587.33, 0.09, 'sine']],
+    land:    [[110, 0.06, 'sine']],
+    cast:    [[880, 0.06, 'sawtooth'], [1174.66, 0.1, 'sine']],
+    collect: [[783.99, 0.07, 'triangle'], [1046.5, 0.12, 'triangle']],
+    right:   [[659.25, 0.08, 'triangle'], [830.61, 0.08, 'triangle'], [1046.5, 0.16, 'triangle']],
+    wrong:   [[220, 0.14, 'sawtooth'], [164.81, 0.22, 'sawtooth']],
+    hurt:    [[196, 0.12, 'sawtooth'], [130.81, 0.2, 'sawtooth']],
+    door:    [[523.25, 0.1, 'triangle'], [659.25, 0.1, 'triangle'], [783.99, 0.1, 'triangle'], [1046.5, 0.25, 'triangle']],
+    win:     [[523.25, 0.12, 'triangle'], [659.25, 0.12, 'triangle'], [783.99, 0.12, 'triangle'], [1046.5, 0.3, 'triangle']],
+    crumble: [[130.81, 0.18, 'sawtooth']],
   },
-
   sfx(scene, key) {
     const s = GDC.Settings.data;
     if (!s.sfx) return;
-    if (scene.cache.audio.exists(key)) {
-      scene.sound.play(key, { volume: s.master });
-      return;
-    }
-
-    const notes = key === 'sfxVictory'
-      ? [523.25, 659.25, 783.99]
-      : key === 'sfxBack' ? [440, 329.63] : [659.25];
-    notes.forEach((frequency, index) => {
-      scene.time.delayedCall(index * 90, () => this.playTone(
-        scene,
-        frequency,
-        0.09,
-        'square',
-        0.12 * s.master,
-      ));
+    const seq = this.SFX[key] || this.SFX.click;
+    let t = 0;
+    seq.forEach(([f, d, type]) => {
+      scene.time.delayedCall(t, () => this.tone(scene, f, d, type, 0.13 * s.master));
+      t += d * 1000 * 0.8;
     });
   },
 
-  playTone(scene, frequency, duration, type, volume = 0.035) {
-    const context = scene.sound.context;
+  tone(scene, frequency, duration, type, volume) {
+    const context = scene.sound && scene.sound.context;
     if (!context || context.state === 'suspended') return;
     const start = context.currentTime;
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, start);
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(volume, start + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start(start);
-    oscillator.stop(start + duration + 0.01);
+    const o = context.createOscillator(), g = context.createGain();
+    o.type = type; o.frequency.setValueAtTime(frequency, start);
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(Math.max(volume, 0.0002), start + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+    o.connect(g); g.connect(context.destination);
+    o.start(start); o.stop(start + duration + 0.02);
   },
 };
