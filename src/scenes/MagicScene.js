@@ -10,15 +10,16 @@ class MagicScene extends Phaser.Scene {
 
   create() {
     const { W, H } = GDC;
-    this.hitY = 800;
+    this.hitY = 810;
     this.cameras.main.fadeIn(300, 10, 6, 24);
     this.add.image(W / 2, 0, 'bg_tower').setOrigin(0.5, 0).setScale(H / 1376);
     // linha de defesa discreta
     const ln = this.add.graphics().setDepth(2);
     for (let x = 0; x < W; x += 26) ln.fillStyle(0xFFF3D1, 0.45).fillRect(x, this.hitY, 14, 3);
 
+    this.bigNum = this.add.text(W / 2, 470, '0', { fontFamily: GDC.FONT, fontSize: '300px', color: '#7fe3f0' }).setOrigin(0.5).setAlpha(0.28).setDepth(1);
     this.wizard = this.add.image(W / 2, H - 6, 'wizard_idle').setOrigin(0.5, 1).setDepth(5);
-    this.wizScale = 250 / this.wizard.height; this.wizard.setScale(this.wizScale);
+    this.wizScale = 200 / this.wizard.height; this.wizard.setScale(this.wizScale);
     this.tweens.add({ targets: this.wizard, scaleY: this.wizScale * 1.025, scaleX: this.wizScale * 0.985, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
     this.queue = GDC.Challenges.generate(this.index, (Math.random() * 1e9) | 0);
@@ -46,25 +47,22 @@ class MagicScene extends Phaser.Scene {
   buildHud() {
     const { W } = GDC;
     this.heartImgs = [];
-    for (let i = 0; i < GDC.LIVES; i++) this.heartImgs.push(this.add.image(30 + i * 36, 34, 'hud_heart').setScale(0.52).setDepth(101));
-    this.add.image(W / 2, 40, 'hud_score').setScale(0.55).setDepth(100);
-    this.scoreTxt = this.add.text(W / 2, 39, '0', { fontFamily: GDC.FONT_BODY, fontSize: '28px', color: GDC.CSS.gold, stroke: GDC.CSS.ink, strokeThickness: 5 }).setOrigin(0.5).setDepth(101);
-    this.add.image(W / 2, 98, 'hud_wave').setScale(0.55).setDepth(100);
-    this.waveTxt = this.add.text(W / 2, 97, '', { fontFamily: GDC.FONT_BODY, fontSize: '20px', color: GDC.CSS.cream, stroke: GDC.CSS.ink, strokeThickness: 4 }).setOrigin(0.5).setDepth(101);
-    this.comboTxt = this.add.text(W / 2 + 90, 98, '', { fontFamily: GDC.FONT_BODY, fontSize: '22px', color: GDC.CSS.cyan, stroke: GDC.CSS.ink, strokeThickness: 5 }).setOrigin(0, 0.5).setDepth(101);
+    for (let i = 0; i < GDC.LIVES; i++) this.heartImgs.push(this.add.image(26 + i * 32, 30, 'hud_heart').setScale(0.44).setDepth(101));
+    this.scoreTxt = this.add.text(14, 54, '0', { fontFamily: GDC.FONT, fontSize: '44px', color: GDC.CSS.gold, stroke: GDC.CSS.ink, strokeThickness: 7 }).setDepth(101);
+    this.comboTxt = this.add.text(W / 2, 40, '', { fontFamily: GDC.FONT, fontSize: '54px', color: '#ffd84a', stroke: GDC.CSS.ink, strokeThickness: 8 }).setOrigin(0.5).setAngle(-6).setDepth(101);
     // pausa: quadrado teal com barras douradas, desenhado em codigo
-    const pb = this.add.container(W - 40, 40).setDepth(102);
+    const pb = this.add.container(W - 36, 36).setDepth(102);
     const g = this.add.graphics();
-    g.fillStyle(GDC.C.ink, 1).fillRoundedRect(-27, -27, 54, 58, 14);
-    g.fillStyle(GDC.C.gold, 1).fillRoundedRect(-24, -24, 48, 50, 12);
-    g.fillStyle(0x0f7a8a, 1).fillRoundedRect(-19, -19, 38, 40, 9);
-    g.fillStyle(GDC.C.gold, 1).fillRoundedRect(-9, -9, 6, 20, 2).fillRoundedRect(3, -9, 6, 20, 2);
+    g.fillStyle(GDC.C.ink, 1).fillRoundedRect(-24, -24, 48, 52, 13);
+    g.fillStyle(GDC.C.gold, 1).fillRoundedRect(-21, -21, 42, 45, 11);
+    g.fillStyle(0x0f7a8a, 1).fillRoundedRect(-17, -17, 34, 36, 8);
+    g.fillStyle(GDC.C.gold, 1).fillRoundedRect(-8, -8, 5, 18, 2).fillRoundedRect(3, -8, 5, 18, 2);
     pb.add(g);
-    const hit = this.add.rectangle(0, 0, 64, 68, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+    const hit = this.add.rectangle(0, 0, 60, 64, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
     pb.add(hit); hit.on('pointerup', () => { GDC.Audio.sfx(this, 'click'); this.pause(); });
     if (this.hints()) {
-      const hb = this.helpBtn = this.add.image(30, 92, 'icon_help').setDepth(102).setInteractive({ useHandCursor: true });
-      hb.setScale(46 / hb.height); hb.on('pointerup', () => { GDC.Audio.sfx(this, 'click'); this.hint(); });
+      const hb = this.helpBtn = this.add.image(W - 36, 96, 'icon_help').setDepth(102).setInteractive({ useHandCursor: true });
+      hb.setScale(44 / hb.height); hb.on('pointerup', () => { GDC.Audio.sfx(this, 'click'); this.hint(); });
     }
     this.updateHud();
   }
@@ -72,8 +70,8 @@ class MagicScene extends Phaser.Scene {
   updateHud() {
     this.heartImgs.forEach((h, i) => { h.setAlpha(i < this.lives ? 1 : 0.25); });
     this.scoreTxt.setText(String(this.score));
-    this.waveTxt.setText(`${Math.min(this.killed + 1, this.total)} / ${this.total}`);
-    this.comboTxt.setText(this.combo >= 3 ? `x${this.combo}` : '');
+    this.bigNum.setText(String(this.killed));
+    this.comboTxt.setText(this.combo >= 3 ? `COMBO x${this.combo}` : '');
   }
 
   intro() {
@@ -111,7 +109,7 @@ class MagicScene extends Phaser.Scene {
   spawn() {
     const item = this.queue.shift();
     let x = 0;
-    for (let k = 0; k < 20; k++) { x = 150 + Math.random() * 240; if (Math.abs(x - this.lastX) > 110) break; }
+    for (let k = 0; k < 20; k++) { x = 85 + Math.random() * 370; if (Math.abs(x - this.lastX) > 130) break; }
     this.lastX = x;
     const boss = item.boss;
     const c = this.add.container(x, -140).setDepth(20);
@@ -137,29 +135,29 @@ class MagicScene extends Phaser.Scene {
     e.content.removeAll(true);
     const it = e.items[e.idx];
     const parts = []; let w = 0;
-    if (it.venn) { const im = this.add.image(0, 0, it.venn); parts.push([im, im.height]); w = Math.max(w, im.width); }
+    if (it.venn) { const im = this.add.image(0, 0, it.venn).setScale(0.8); parts.push([im, im.displayHeight]); w = Math.max(w, im.displayWidth); }
     it.lines.forEach((ln) => {
-      const t = this.add.text(0, 0, ln.t, { fontFamily: GDC.FONT_BODY, fontSize: ln.k === 'main' ? '23px' : '19px', color: ln.k === 'main' ? '#1B1F4B' : '#5B3FA0' }).setOrigin(0.5);
+      const t = this.add.text(0, 0, ln.t, { fontFamily: GDC.FONT_BODY, fontSize: ln.k === 'main' ? '20px' : '16px', color: ln.k === 'main' ? '#1B1F4B' : '#5B3FA0' }).setOrigin(0.5);
       parts.push([t, t.height]); w = Math.max(w, t.width);
     });
     const total = parts.reduce((s, p) => s + p[1], 0);
     let y = -total / 2;
     parts.forEach(([o, hh]) => { o.setY(y + hh / 2); e.content.add(o); y += hh; });
-    e.w = Math.max(120, w + 26); e.h = total + 22;
+    e.w = Math.max(96, w + 20); e.h = total + 16;
     if (e.items.length > 1) {
       for (let k = 0; k < e.items.length; k++) e.content.add(this.add.circle((k - (e.items.length - 1) / 2) * 16, e.h / 2 + 8, 5, k < e.idx ? GDC.C.cyan : (k === e.idx ? GDC.C.gold : GDC.C.grey)).setStrokeStyle(2, GDC.C.ink));
     }
     // balao oval do tamanho da placa
-    const bw = Math.max(175, e.w + 52), bh = Math.max(150, e.h + 70);
+    const bw = Math.max(140, e.w + 44), bh = Math.max(120, e.h + 56);
     e.bw = bw; e.bh = bh;
     e.balloon.setDisplaySize(bw, bh);
     e.glow.setDisplaySize(bw * 1.5, bh * 1.5);
     const py = e.boss ? bh / 2 - 10 : -4;
     e.content.setY(py); e.plateY = py;
     this.drawPlate(e);
-    if (e.foe) { e.foe.setScale(92 / e.foe.height); e.foe.setY(bh / 2 + 22); }
-    e.rope.clear().lineStyle(3, GDC.C.ink, 1).lineBetween(0, bh / 2 - 6, 0, bh / 2 + 34);
-    e.bottom = e.boss ? bh / 2 + 36 : bh / 2 + 22 + 92;
+    if (e.foe) { e.foe.setScale(74 / e.foe.height); e.foe.setY(bh / 2 + 18); }
+    e.rope.clear().lineStyle(3, GDC.C.ink, 1).lineBetween(0, bh / 2 - 6, 0, bh / 2 + 26);
+    e.bottom = e.boss ? bh / 2 + 36 : bh / 2 + 18 + 74;
   }
 
   drawPlate(e) {
@@ -295,7 +293,7 @@ class MagicScene extends Phaser.Scene {
 
   cast(x, y) {
     this.tweens.add({ targets: this.wizard, angle: { from: -3, to: 0 }, duration: 220, ease: 'Back.easeOut' });
-    const sx = this.wizard.x - 80, sy = this.wizard.y - 232;
+    const sx = this.wizard.x - 62, sy = this.wizard.y - 182;
     const bolt = this.add.image(sx, sy, 'spark_big').setScale(0.5).setDepth(30).setBlendMode('ADD');
     this.tweens.add({ targets: bolt, x, y: y + 30, duration: 170, ease: 'Quad.easeIn', onComplete: () => bolt.destroy() });
   }
