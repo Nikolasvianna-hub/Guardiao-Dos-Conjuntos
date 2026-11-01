@@ -139,7 +139,7 @@
     { id: 2, name: 'Pertinência e União', concept: '∈  ⊂  ∪  ∩  ∅ com elementos', gens: ['gMember', 'gSetOp', 'gEmpty', 'gVenn'], n: 10, speed: 62, gap: 4.6, maxOn: 3 },
     { id: 3, name: 'Cardinalidade', concept: '|A| = número de elementos', gens: ['gCard', 'gCardOp'], n: 10, speed: 62, gap: 5.0, maxOn: 3 },
     { id: 4, name: 'Inclusão e Exclusão', concept: '|A∪B| = |A| + |B| − |A∩B|', gens: ['gIE', 'gCardOp'], n: 10, speed: 60, gap: 6.0, maxOn: 3 },
-    { id: 5, name: 'O Olho do Paradoxo', concept: 'Tudo junto, com chefão', gens: ['gName', 'gVenn', 'gMember', 'gSetOp', 'gEmpty', 'gCard', 'gCardOp', 'gIE'], n: 12, speed: 68, gap: 5.2, maxOn: 3, boss: true },
+    { id: 5, name: 'O Rei Paradoxo', concept: 'Tudo junto, com chefão', gens: ['gName', 'gVenn', 'gMember', 'gSetOp', 'gEmpty', 'gCard', 'gCardOp', 'gIE'], n: 12, speed: 68, gap: 5.2, maxOn: 3, boss: true },
   ];
 
   /* Gera a lista de inimigos da fase. Cada inimigo tem 'items' (1 desafio; o chefao tem 3 em sequencia) */

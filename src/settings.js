@@ -1,6 +1,6 @@
 /* Configuracoes e progresso do jogador, salvos no navegador (localStorage) */
 GDC.Settings = {
-  data: { master: 0.8, music: true, sfx: true, unlocked: 1, stars: {} },
+  data: { master: 0.8, music: true, sfx: true, hints: true, unlocked: 1, stars: {} },
 
   load() {
     try {

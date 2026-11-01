@@ -10,19 +10,16 @@ class MagicScene extends Phaser.Scene {
 
   create() {
     const { W, H } = GDC;
-    this.hitY = 770;
+    this.hitY = 800;
     this.cameras.main.fadeIn(300, 10, 6, 24);
     this.add.image(W / 2, 0, 'bg_tower').setOrigin(0.5, 0).setScale(H / 1376);
-    this.add.rectangle(W / 2, H / 2, W, H, 0x0d0f26, 0.3);
-    const bar = this.add.graphics();
-    bar.fillGradientStyle(GDC.C.gold, GDC.C.gold, GDC.C.gold, GDC.C.gold, 0, 0, 0.5, 0.5).fillRect(0, this.hitY - 40, W, 40);
-    bar.fillStyle(GDC.C.gold, 0.9).fillRect(0, this.hitY, W, 4);
-    bar.fillStyle(GDC.C.ink, 0.55).fillRect(0, this.hitY + 4, W, H - this.hitY - 4);
-    this.add.particles(0, 0, 'spark_small', { x: { min: 0, max: W }, y: { min: 100, max: H }, lifespan: 4000, speedY: { min: -20, max: -50 }, scale: { start: 0.25, end: 0 }, alpha: { start: 0.6, end: 0 }, frequency: 260, blendMode: 'ADD' });
+    // linha de defesa discreta
+    const ln = this.add.graphics().setDepth(2);
+    for (let x = 0; x < W; x += 26) ln.fillStyle(0xFFF3D1, 0.45).fillRect(x, this.hitY, 14, 3);
 
-    this.wizard = this.add.image(W / 2, H + 8, 'wizard_idle').setOrigin(0.5, 1).setDepth(5);
+    this.wizard = this.add.image(W / 2, H - 6, 'wizard_idle').setOrigin(0.5, 1).setDepth(5);
     this.wizScale = 250 / this.wizard.height; this.wizard.setScale(this.wizScale);
-    this.tweens.add({ targets: this.wizard, scaleY: this.wizScale * 1.03, scaleX: this.wizScale * 0.985, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: this.wizard, scaleY: this.wizScale * 1.025, scaleX: this.wizScale * 0.985, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
     this.queue = GDC.Challenges.generate(this.index, (Math.random() * 1e9) | 0);
     this.total = this.queue.length;
@@ -43,33 +40,47 @@ class MagicScene extends Phaser.Scene {
     if (this.index === 0) this.intro(); else this.beginLevel();
   }
 
-  /* ---------- interface ---------- */
+  hints() { return GDC.Settings.data.hints; }
+
+  /* ---------- interface (enxuta, como no Magic Touch) ---------- */
   buildHud() {
     const { W } = GDC;
-    this.add.rectangle(W / 2, 0, W, 112, GDC.C.ink, 0.6).setOrigin(0.5, 0).setDepth(100);
-    this.hearts = this.add.text(18, 18, '', { fontFamily: GDC.FONT_BODY, fontSize: '30px', color: '#ff5a64', stroke: GDC.CSS.ink, strokeThickness: 5 }).setDepth(101);
-    this.scoreTxt = this.add.text(W / 2, 22, '0', { fontFamily: GDC.FONT_BODY, fontSize: '34px', color: GDC.CSS.gold, stroke: GDC.CSS.ink, strokeThickness: 6 }).setOrigin(0.5, 0).setDepth(101);
-    this.progTxt = this.add.text(18, 70, '', { fontFamily: GDC.FONT_BODY, fontSize: '19px', color: GDC.CSS.soft, stroke: GDC.CSS.ink, strokeThickness: 4 }).setDepth(101);
-    this.comboTxt = this.add.text(W / 2, 70, '', { fontFamily: GDC.FONT_BODY, fontSize: '22px', color: GDC.CSS.cyan, stroke: GDC.CSS.ink, strokeThickness: 5 }).setOrigin(0.5, 0).setDepth(101);
-    const mk = (x, key, fn) => { const b = this.add.image(x, 48, key).setDepth(102).setInteractive({ useHandCursor: true }); b.setScale(56 / b.height); b.on('pointerup', () => { GDC.Audio.sfx(this, 'click'); fn(); }); return b; };
-    mk(W - 112, 'icon_help', () => this.hint());
-    mk(W - 44, 'icon_gear', () => this.pause());
+    this.heartImgs = [];
+    for (let i = 0; i < GDC.LIVES; i++) this.heartImgs.push(this.add.image(30 + i * 36, 34, 'hud_heart').setScale(0.52).setDepth(101));
+    this.add.image(W / 2, 40, 'hud_score').setScale(0.55).setDepth(100);
+    this.scoreTxt = this.add.text(W / 2, 39, '0', { fontFamily: GDC.FONT_BODY, fontSize: '28px', color: GDC.CSS.gold, stroke: GDC.CSS.ink, strokeThickness: 5 }).setOrigin(0.5).setDepth(101);
+    this.add.image(W / 2, 98, 'hud_wave').setScale(0.55).setDepth(100);
+    this.waveTxt = this.add.text(W / 2, 97, '', { fontFamily: GDC.FONT_BODY, fontSize: '20px', color: GDC.CSS.cream, stroke: GDC.CSS.ink, strokeThickness: 4 }).setOrigin(0.5).setDepth(101);
+    this.comboTxt = this.add.text(W / 2 + 90, 98, '', { fontFamily: GDC.FONT_BODY, fontSize: '22px', color: GDC.CSS.cyan, stroke: GDC.CSS.ink, strokeThickness: 5 }).setOrigin(0, 0.5).setDepth(101);
+    // pausa: quadrado teal com barras douradas, desenhado em codigo
+    const pb = this.add.container(W - 40, 40).setDepth(102);
+    const g = this.add.graphics();
+    g.fillStyle(GDC.C.ink, 1).fillRoundedRect(-27, -27, 54, 58, 14);
+    g.fillStyle(GDC.C.gold, 1).fillRoundedRect(-24, -24, 48, 50, 12);
+    g.fillStyle(0x0f7a8a, 1).fillRoundedRect(-19, -19, 38, 40, 9);
+    g.fillStyle(GDC.C.gold, 1).fillRoundedRect(-9, -9, 6, 20, 2).fillRoundedRect(3, -9, 6, 20, 2);
+    pb.add(g);
+    const hit = this.add.rectangle(0, 0, 64, 68, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+    pb.add(hit); hit.on('pointerup', () => { GDC.Audio.sfx(this, 'click'); this.pause(); });
+    if (this.hints()) {
+      const hb = this.helpBtn = this.add.image(30, 92, 'icon_help').setDepth(102).setInteractive({ useHandCursor: true });
+      hb.setScale(46 / hb.height); hb.on('pointerup', () => { GDC.Audio.sfx(this, 'click'); this.hint(); });
+    }
     this.updateHud();
   }
 
   updateHud() {
-    this.hearts.setText('♥'.repeat(Math.max(0, this.lives)) + '♡'.repeat(Math.max(0, GDC.LIVES - this.lives)));
+    this.heartImgs.forEach((h, i) => { h.setAlpha(i < this.lives ? 1 : 0.25); });
     this.scoreTxt.setText(String(this.score));
-    this.progTxt.setText(`Fase ${this.lv.id}: ${this.killed}/${this.total}`);
-    this.comboTxt.setText(this.combo >= 2 ? `COMBO x${this.combo}` : '');
+    this.waveTxt.setText(`${Math.min(this.killed + 1, this.total)} / ${this.total}`);
+    this.comboTxt.setText(this.combo >= 3 ? `x${this.combo}` : '');
   }
 
   intro() {
     this.state = 'dialog';
-    const d = GDC.UI.dialog(this, 'COMO JOGAR',
+    this.dlg = GDC.UI.dialog(this, 'COMO JOGAR',
       'Inimigos descem presos a balões com desafios de conjuntos.\n\nDESENHE com o dedo o símbolo que responde ao desafio.\n\nExemplo: "A ? B  união" pede o símbolo ∪ (um U).\n\nNo começo, um traço-guia mostra como desenhar.',
       [{ label: 'VAMOS LÁ!', onClick: (c) => { c.destroy(); this.beginLevel(); } }], { height: 700, fontSize: 21 });
-    this.dlg = d;
   }
 
   beginLevel() {
@@ -81,39 +92,43 @@ class MagicScene extends Phaser.Scene {
   pause() {
     if (this.state !== 'play') return;
     this.state = 'dialog';
+    const s = GDC.Settings.data;
     this.dlg = GDC.UI.dialog(this, 'PAUSA', 'O jogo está parado.', [
       { label: 'CONTINUAR', onClick: (c) => { c.destroy(); this.state = 'play'; } },
+      { label: `DICAS: ${s.hints ? 'LIGADAS' : 'DESLIGADAS'}`, onClick: (c, b) => { s.hints = !s.hints; GDC.Settings.save(); b.setLabel(`DICAS: ${s.hints ? 'LIGADAS' : 'DESLIGADAS'}`); this.hideGhost(); if (!s.hints && this.helpBtn) this.helpBtn.setVisible(false); } },
       { label: 'GLOSSÁRIO', onClick: (c) => { c.destroy(); this.glossary(); } },
       { label: 'MENU', onClick: (c) => { c.destroy(); this.leave('MenuScene'); } },
-    ], { height: 560 });
+    ], { height: 620 });
   }
 
   glossary() {
     this.dlg = GDC.UI.dialog(this, 'GLOSSÁRIO', GDC.GLOSSARY, [{ label: 'VOLTAR', onClick: (c) => { c.destroy(); this.state = 'play'; this.pause(); } }], { height: 760, fontSize: 19 });
   }
 
-  leave(key, data) {
-    GDC.UI.goTo(this, key, data);
-  }
+  leave(key, data) { GDC.UI.goTo(this, key, data); }
 
-  /* ---------- inimigos ---------- */
+  /* ---------- inimigos: balao dourado com placa de texto, preso a um servo ---------- */
   spawn() {
     const item = this.queue.shift();
     let x = 0;
-    for (let k = 0; k < 20; k++) { x = 140 + Math.random() * 260; if (Math.abs(x - this.lastX) > 110) break; }
+    for (let k = 0; k < 20; k++) { x = 150 + Math.random() * 240; if (Math.abs(x - this.lastX) > 110) break; }
     this.lastX = x;
     const boss = item.boss;
-    const c = this.add.container(x, -110).setDepth(20);
-    const gfx = this.add.graphics();
-    const foe = this.add.image(0, 0, 'paradox').setOrigin(0.5, 0);
-    foe.setScale((boss ? 112 : 70) / foe.height);
+    const c = this.add.container(x, -140).setDepth(20);
+    const glow = this.add.image(0, 0, 'spark_big').setBlendMode('ADD').setTint(GDC.C.gold).setAlpha(0.0);
+    const rope = this.add.graphics();
+    const balloon = this.add.image(0, 0, boss ? 'paradox' : 'balloon_gold');
+    const plate = this.add.graphics();
+    const foeKey = boss ? null : ['foe_goblin', 'foe_skeleton', 'foe_imp', 'foe_orc'][this.spawned % 4 === 0 && Math.random() < 0.5 ? 0 : Math.floor(Math.random() * 4)];
+    const foe = foeKey ? this.add.image(0, 0, foeKey).setOrigin(0.5, 0) : null;
     const content = this.add.container(0, 0);
-    c.add([gfx, foe, content]);
-    const e = { c, gfx, foe, content, items: item.items, idx: 0, boss, wrong: 0, assist: this.index === 0 && this.spawned < 3, w: 0, h: 0,
+    c.add([glow, rope, ...(foe ? [foe] : []), balloon, plate, content]);
+    const e = { c, glow, rope, balloon, plate, foe, content, items: item.items, idx: 0, boss, wrong: 0, assist: this.index === 0 && this.spawned < 3 && this.hints(), w: 0, h: 0,
       speed: this.lv.speed * (boss ? 0.7 : 1) * (this.index === 0 && this.spawned === 0 ? 0.65 : 1), dead: false };
     this.spawned++;
     this.setItem(e);
-    this.tweens.add({ targets: foe, angle: { from: -5, to: 5 }, duration: 700 + Math.random() * 300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    if (foe) this.tweens.add({ targets: foe, angle: { from: -4, to: 4 }, duration: 700 + Math.random() * 300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    this.tweens.add({ targets: balloon, scaleY: { from: balloon.scaleY, to: balloon.scaleY * 1.03 }, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     this.enemies.push(e);
     this.retarget();
   }
@@ -121,40 +136,47 @@ class MagicScene extends Phaser.Scene {
   setItem(e) {
     e.content.removeAll(true);
     const it = e.items[e.idx];
-    const parts = []; let w = 0, y = 0;
+    const parts = []; let w = 0;
     if (it.venn) { const im = this.add.image(0, 0, it.venn); parts.push([im, im.height]); w = Math.max(w, im.width); }
     it.lines.forEach((ln) => {
-      const t = this.add.text(0, 0, ln.t, { fontFamily: GDC.FONT_BODY, fontSize: ln.k === 'main' ? '26px' : '21px', color: ln.k === 'main' ? '#1B1F4B' : '#5B3FA0' }).setOrigin(0.5);
-      parts.push([t, t.height + 2]); w = Math.max(w, t.width);
+      const t = this.add.text(0, 0, ln.t, { fontFamily: GDC.FONT_BODY, fontSize: ln.k === 'main' ? '23px' : '19px', color: ln.k === 'main' ? '#1B1F4B' : '#5B3FA0' }).setOrigin(0.5);
+      parts.push([t, t.height]); w = Math.max(w, t.width);
     });
     const total = parts.reduce((s, p) => s + p[1], 0);
-    y = -total / 2;
+    let y = -total / 2;
     parts.forEach(([o, hh]) => { o.setY(y + hh / 2); e.content.add(o); y += hh; });
-    e.w = Math.min(300, Math.max(150, w + 46)); e.h = Math.max(96, total + 38);
+    e.w = Math.max(120, w + 26); e.h = total + 22;
     if (e.items.length > 1) {
-      for (let k = 0; k < e.items.length; k++) e.content.add(this.add.circle((k - (e.items.length - 1) / 2) * 18, e.h / 2 - 10, 5, k < e.idx ? GDC.C.cyan : (k === e.idx ? GDC.C.gold : GDC.C.grey)).setStrokeStyle(2, GDC.C.ink));
+      for (let k = 0; k < e.items.length; k++) e.content.add(this.add.circle((k - (e.items.length - 1) / 2) * 16, e.h / 2 + 8, 5, k < e.idx ? GDC.C.cyan : (k === e.idx ? GDC.C.gold : GDC.C.grey)).setStrokeStyle(2, GDC.C.ink));
     }
-    this.drawBalloon(e);
-    e.foe.setY(e.h / 2 + 26);
-    e.bottom = e.h / 2 + 26 + e.foe.displayHeight;
-    e.content.setY(0);
+    // balao oval do tamanho da placa
+    const bw = Math.max(175, e.w + 52), bh = Math.max(150, e.h + 70);
+    e.bw = bw; e.bh = bh;
+    e.balloon.setDisplaySize(bw, bh);
+    e.glow.setDisplaySize(bw * 1.5, bh * 1.5);
+    const py = e.boss ? bh / 2 - 10 : -4;
+    e.content.setY(py); e.plateY = py;
+    this.drawPlate(e);
+    if (e.foe) { e.foe.setScale(92 / e.foe.height); e.foe.setY(bh / 2 + 22); }
+    e.rope.clear().lineStyle(3, GDC.C.ink, 1).lineBetween(0, bh / 2 - 6, 0, bh / 2 + 34);
+    e.bottom = e.boss ? bh / 2 + 36 : bh / 2 + 22 + 92;
   }
 
-  drawBalloon(e) {
-    const g = e.gfx, w = e.w, h = e.h, hot = this.target === e;
-    g.clear();
-    g.lineStyle(3, GDC.C.ink, 1).lineBetween(0, h / 2 + 4, -6, e.foe.y + 12);
-    g.fillStyle(GDC.C.ink, 1).fillTriangle(-9, h / 2 + 12, 9, h / 2 + 12, 0, h / 2 - 2);
-    g.fillStyle(hot ? GDC.C.gold : GDC.C.ink, 1).fillRoundedRect(-w / 2 - 7, -h / 2 - 7, w + 14, h + 14, h / 2.2);
-    g.fillStyle(GDC.C.ink, 1).fillRoundedRect(-w / 2 - 3, -h / 2 - 3, w + 6, h + 6, h / 2.3);
-    g.fillStyle(GDC.C.cream, 1).fillRoundedRect(-w / 2, -h / 2, w, h, h / 2.4);
-    g.fillStyle(0xffffff, 0.55).fillRoundedRect(-w / 2 + 14, -h / 2 + 8, w * 0.4, 9, 5);
+  drawPlate(e) {
+    const g = e.plate; g.clear();
+    const w = e.w, h = e.h, y = e.plateY;
+    g.fillStyle(GDC.C.ink, 1).fillRoundedRect(-w / 2 - 4, y - h / 2 - 4, w + 8, h + 8, 18);
+    g.fillStyle(GDC.C.cream, 1).fillRoundedRect(-w / 2, y - h / 2, w, h, 15);
   }
 
   retarget() {
     const prev = this.target;
     this.target = this.enemies.reduce((m, e) => (!m || e.c.y > m.c.y ? e : m), null);
-    if (prev !== this.target) { if (prev && !prev.dead) this.drawBalloon(prev); if (this.target) this.drawBalloon(this.target); this.pending = null; this.refreshGhost(); }
+    if (prev !== this.target) {
+      if (prev && !prev.dead) prev.glow.setAlpha(0);
+      if (this.target) { this.target.glow.setAlpha(0.35); }
+      this.pending = null; this.refreshGhost();
+    }
   }
 
   /* ---------- laco principal ---------- */
@@ -175,8 +197,8 @@ class MagicScene extends Phaser.Scene {
   /* ---------- entrada: o jogador desenha ---------- */
   onDown(p, over) {
     if (this.state !== 'play' || (over && over.length)) return;
-    if (this.pending) { this.stroke = this.pending.points.slice(); this.pending.timer.remove(); this.pending = null; this.joined = true; }
-    else { this.stroke = []; this.joined = false; this.trail.clear(); this.trail.setAlpha(1); }
+    if (this.pending) { this.stroke = this.pending.points.slice(); this.pending.timer.remove(); this.pending = null; }
+    else { this.stroke = []; this.trail.clear(); this.trail.setAlpha(1); }
     this.stroke.push([p.x, p.y]);
   }
 
@@ -217,12 +239,12 @@ class MagicScene extends Phaser.Scene {
     this.score += pts;
     this.cast(e.c.x, e.c.y);
     this.floatText(e.c.x, e.c.y - 20, `+${pts}`, GDC.CSS.gold);
-    this.banner(it.expl);
+    if (this.hints()) this.banner(it.expl);
     this.hideGhost();
     e.idx++; e.wrong = 0;
     if (e.idx < e.items.length) {
-      this.burst(e.c.x, e.c.y, 8);
-      this.tweens.add({ targets: e.c, scale: { from: 1.18, to: 1 }, duration: 200 });
+      this.boom(e.c.x, e.c.y, 0.5);
+      this.tweens.add({ targets: e.c, scale: { from: 1.12, to: 1 }, duration: 200 });
       this.setItem(e); this.refreshGhost();
     } else {
       this.kill(e, true);
@@ -235,8 +257,10 @@ class MagicScene extends Phaser.Scene {
     GDC.Audio.sfx(this, 'wrong');
     this.combo = 0; e.wrong++;
     this.score = Math.max(0, this.score - 5);
-    const shown = res && res.best ? GDC.Challenges.charOf(res.best) : '?';
-    this.floatText(e.c.x, e.c.y + 10, `parece ${shown}`, '#ff8d92');
+    if (this.hints()) {
+      const shown = res && res.best ? GDC.Challenges.charOf(res.best) : '?';
+      this.floatText(e.c.x, e.c.y + 10, `parece ${shown}`, '#ff8d92');
+    }
     this.tweens.add({ targets: e.c, x: { from: e.c.x - 10, to: e.c.x }, duration: 260, ease: 'Bounce.easeOut' });
     const flash = this.add.rectangle(GDC.W / 2, GDC.H / 2, GDC.W, GDC.H, 0xE5484D, 0.16).setDepth(800);
     this.tweens.add({ targets: flash, alpha: 0, duration: 260, onComplete: () => flash.destroy() });
@@ -260,23 +284,28 @@ class MagicScene extends Phaser.Scene {
     e.dead = true;
     this.enemies.splice(this.enemies.indexOf(e), 1);
     if (good) this.killed++;
-    this.burst(e.c.x, e.c.y + 40, good ? 22 : 10);
-    this.tweens.add({ targets: e.c, scale: 0, angle: 200, alpha: 0, duration: 380, ease: 'Back.easeIn', onComplete: () => e.c.destroy() });
+    this.boom(e.c.x, e.c.y, good ? 0.9 : 0.5);
+    // o balao estoura e o servo cai girando
+    [e.balloon, e.plate, e.content, e.rope, e.glow].forEach((o) => this.tweens.add({ targets: o, alpha: 0, scale: o === e.balloon ? o.scaleX * 1.25 : o.scale, duration: 160 }));
+    if (e.foe) this.tweens.add({ targets: e.foe, y: e.foe.y + 420, angle: 220, alpha: 0, duration: 650, ease: 'Quad.easeIn' });
+    this.time.delayedCall(700, () => e.c.destroy());
     this.retarget();
     this.updateHud();
   }
 
   cast(x, y) {
-    this.wizard.setTexture('wizard_cast');
-    this.time.delayedCall(320, () => this.wizard.setTexture('wizard_idle'));
-    const bolt = this.add.image(this.wizard.x + 30, this.wizard.y - 190, 'spark_big').setScale(0.55).setDepth(30).setBlendMode('ADD');
+    this.tweens.add({ targets: this.wizard, angle: { from: -3, to: 0 }, duration: 220, ease: 'Back.easeOut' });
+    const sx = this.wizard.x - 80, sy = this.wizard.y - 232;
+    const bolt = this.add.image(sx, sy, 'spark_big').setScale(0.5).setDepth(30).setBlendMode('ADD');
     this.tweens.add({ targets: bolt, x, y: y + 30, duration: 170, ease: 'Quad.easeIn', onComplete: () => bolt.destroy() });
   }
 
-  burst(x, y, n) {
-    const p = this.add.particles(x, y, 'spark_star', { speed: { min: 120, max: 340 }, lifespan: 650, scale: { start: 0.55, end: 0 }, angle: { min: 0, max: 360 }, blendMode: 'ADD', emitting: false }).setDepth(40);
-    p.explode(n);
-    this.time.delayedCall(900, () => p.destroy());
+  boom(x, y, s) {
+    const b = this.add.image(x, y + 20, Math.random() < 0.5 ? 'boom1' : 'boom2').setDepth(40).setScale(0.2 * s).setBlendMode('NORMAL');
+    this.tweens.add({ targets: b, scale: 1.1 * s, alpha: 0, angle: Phaser.Math.Between(-25, 25), duration: 420, ease: 'Cubic.easeOut', onComplete: () => b.destroy() });
+    const p = this.add.particles(x, y, 'spark_star', { speed: { min: 120, max: 320 }, lifespan: 600, scale: { start: 0.45, end: 0 }, angle: { min: 0, max: 360 }, blendMode: 'ADD', emitting: false }).setDepth(41);
+    p.explode(Math.round(12 * s));
+    this.time.delayedCall(800, () => p.destroy());
   }
 
   floatText(x, y, str, color) {
@@ -286,33 +315,40 @@ class MagicScene extends Phaser.Scene {
 
   banner(str) {
     if (this.bannerTxt) this.bannerTxt.destroy();
-    const t = this.add.text(GDC.W / 2, 128, str, { fontFamily: GDC.FONT_BODY, fontSize: '19px', color: GDC.CSS.cream, backgroundColor: 'rgba(10,6,24,0.75)', padding: { x: 12, y: 8 }, align: 'center', wordWrap: { width: 480 } }).setOrigin(0.5, 0).setDepth(300);
+    const t = this.add.text(GDC.W / 2, 140, str, { fontFamily: GDC.FONT_BODY, fontSize: '18px', color: GDC.CSS.cream, backgroundColor: 'rgba(10,6,24,0.7)', padding: { x: 12, y: 7 }, align: 'center', wordWrap: { width: 470 } }).setOrigin(0.5, 0).setDepth(300);
     this.bannerTxt = t;
-    this.tweens.add({ targets: t, alpha: 0, delay: 2200, duration: 500, onComplete: () => { if (this.bannerTxt === t) this.bannerTxt = null; t.destroy(); } });
+    this.tweens.add({ targets: t, alpha: 0, delay: 1800, duration: 400, onComplete: () => { if (this.bannerTxt === t) this.bannerTxt = null; t.destroy(); } });
   }
 
-  /* ---------- traco-guia (ajuda) ---------- */
+  /* ---------- traco-guia (dicas) ---------- */
   hint() {
-    if (this.state !== 'play' || !this.target) return;
+    if (this.state !== 'play' || !this.target || !this.hints()) return;
     this.target.assist = true; this.refreshGhost();
   }
 
   refreshGhost() {
     this.hideGhost();
     const e = this.target;
-    if (!e || e.dead || !(e.assist || e.wrong >= 2)) return;
+    if (!this.hints() || !e || e.dead || !(e.assist || e.wrong >= 2)) return;
     const glyph = e.items[e.idx].answer;
-    const pts = GDC.Gestures.pointsFor(glyph, 0), S = 190, cx = GDC.W / 2, cy = 560;
+    const pts = GDC.Gestures.pointsFor(glyph, 0), S = 170, cx = GDC.W / 2 - 40, cy = 600;
     const norm = pts.map(([x, y]) => [cx - S / 2 + x * S, cy - S / 2 + y * S]);
     const g = this.add.graphics().setDepth(250);
-    const label = this.add.text(cx, cy + S / 2 + 34, `Desenhe: ${GDC.Challenges.charOf(glyph)}`, { fontFamily: GDC.FONT_BODY, fontSize: '28px', color: GDC.CSS.gold, stroke: GDC.CSS.ink, strokeThickness: 6 }).setOrigin(0.5).setDepth(250);
+    const objs = [g];
+    if (this.textures.exists('sym_' + glyph)) {
+      const sb = this.add.image(cx + S / 2 + 75, cy, 'sym_' + glyph).setDepth(250).setScale(0.85);
+      this.tweens.add({ targets: sb, y: cy - 8, yoyo: true, repeat: -1, duration: 800, ease: 'Sine.easeInOut' });
+      objs.push(sb);
+    } else {
+      objs.push(this.add.text(cx + S / 2 + 70, cy, GDC.Challenges.charOf(glyph), { fontFamily: GDC.FONT_BODY, fontSize: '64px', color: GDC.CSS.gold, stroke: GDC.CSS.ink, strokeThickness: 8 }).setOrigin(0.5).setDepth(250));
+    }
     const st = { p: 0 };
     const tw = this.tweens.add({
       targets: st, p: 1, duration: 1700, repeat: -1, repeatDelay: 600, ease: 'Sine.easeInOut',
       onUpdate: () => {
         g.clear();
         const k = Math.max(2, Math.floor(st.p * norm.length));
-        [[12, GDC.C.ink, 0.55], [7, 0xffffff, 0.75]].forEach(([w, col, a]) => {
+        [[12, GDC.C.ink, 0.6], [7, 0xffffff, 0.85]].forEach(([w, col, a]) => {
           g.lineStyle(w, col, a).beginPath().moveTo(norm[0][0], norm[0][1]);
           for (let i = 1; i < k; i++) g.lineTo(norm[i][0], norm[i][1]);
           g.strokePath();
@@ -320,12 +356,12 @@ class MagicScene extends Phaser.Scene {
         g.fillStyle(GDC.C.gold, 1).fillCircle(norm[k - 1][0], norm[k - 1][1], 11);
       },
     });
-    this.ghost = { g, label, tw };
+    this.ghost = { objs, tw };
   }
 
   hideGhost() {
     if (!this.ghost) return;
-    this.ghost.tw.remove(); this.ghost.g.destroy(); this.ghost.label.destroy(); this.ghost = null;
+    this.ghost.tw.remove(); this.ghost.objs.forEach((o) => o.destroy()); this.ghost = null;
   }
 
   /* ---------- fim de fase ---------- */
@@ -353,8 +389,8 @@ class MagicScene extends Phaser.Scene {
     this.state = 'end';
     this.hideGhost();
     this.time.delayedCall(500, () => {
-      this.dlg = GDC.UI.dialog(this, 'A TORRE CAIU...',
-        'Os servos do Paradoxo passaram pela linha dourada. Treine os símbolos e tente de novo!', [
+      this.dlg = GDC.UI.dialog(this, 'O CASTELO CAIU...',
+        'Os servos do Paradoxo passaram pela linha de defesa. Treine os símbolos e tente de novo!', [
           { label: 'TENTAR DE NOVO', onClick: (c) => { c.destroy(); this.leave('MagicScene', { index: this.index }); } },
           { label: 'MENU', onClick: (c) => { c.destroy(); this.leave('MenuScene'); } },
         ], { height: 560 });

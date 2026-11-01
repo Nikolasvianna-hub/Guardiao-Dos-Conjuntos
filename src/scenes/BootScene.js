@@ -10,11 +10,14 @@ class BootScene extends Phaser.Scene {
     const bar = this.add.rectangle(W / 2 - 206, H / 2 + 20, 4, 18, GDC.C.cyan).setOrigin(0, 0.5);
     this.load.on('progress', (p) => { bar.width = Math.max(4, 412 * p); });
     this.load.setPath('assets/img/');
-    this.load.image('bg_tower', 'bg_tower.jpg');
-    ['wizard_idle', 'wizard_cast', 'paradox', 'emblem', 'panel', 'glow',
-      'crys_a', 'crys_b', 'crys_ab', 'star', 'book', 'scroll', 'letter_a', 'omega',
+    this.load.image('bg_tower', 'bg_castle.jpg');
+    this.load.image('wizard_idle', 'wizard.png');
+    ['paradox', 'emblem', 'panel', 'balloon_gold', 'boom1', 'boom2',
+      'foe_goblin', 'foe_skeleton', 'foe_imp', 'foe_orc',
+      'hud_heart', 'hud_score', 'hud_wave',
+      'sym_cup', 'sym_cap', 'sym_elem', 'sym_subset', 'sym_empty',
       'spark_big', 'spark_small', 'spark_star',
-      'icon_play', 'icon_door', 'icon_gear', 'icon_book', 'icon_sound', 'icon_music', 'icon_close', 'icon_help',
+      'icon_play', 'icon_door', 'icon_gear', 'icon_book', 'icon_help', 'icon_close',
     ].forEach((k) => this.load.image(k, k + '.png'));
   }
 

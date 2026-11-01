@@ -1,4 +1,4 @@
-/* Menu principal em retrato: torre ilustrada ao fundo, titulo, mago e botoes */
+/* Menu principal em retrato: castelo ilustrado ao fundo, titulo, mago e botoes */
 class MenuScene extends Phaser.Scene {
   constructor() { super('MenuScene'); }
 
@@ -6,7 +6,7 @@ class MenuScene extends Phaser.Scene {
     const { W, H } = GDC;
     this.cameras.main.fadeIn(350, 10, 6, 24);
     const bg = this.add.image(W / 2, 0, 'bg_tower').setOrigin(0.5, 0).setScale(H / 1376);
-    this.add.rectangle(W / 2, H / 2, W, H, 0x0d0f26, 0.25);
+    this.add.rectangle(W / 2, H / 2, W, H, 0x0d0f26, 0.38);
     const vg = this.add.graphics();
     vg.fillGradientStyle(0x0d0f26, 0x0d0f26, 0x0d0f26, 0x0d0f26, 0.75, 0.75, 0, 0).fillRect(0, 0, W, 420);
     this.add.particles(0, 0, 'spark_small', {
@@ -60,11 +60,12 @@ class MenuScene extends Phaser.Scene {
   options() {
     const s = GDC.Settings.data;
     const lab = (n, v) => `${n}: ${v ? 'LIGADO' : 'LIGADA'}`;
-    this.showDialog('OPÇÕES', 'As escolhas ficam salvas neste aparelho.', [
+    this.showDialog('OPÇÕES', 'Dicas: traço-guia e explicações.\nAs escolhas ficam salvas neste aparelho.', [
       { label: lab('EFEITOS', s.sfx), onClick: (c, b) => { s.sfx = !s.sfx; GDC.Settings.save(); b.setLabel(lab('EFEITOS', s.sfx)); } },
       { label: lab('MÚSICA', s.music), onClick: (c, b) => { s.music = !s.music; GDC.Settings.save(); b.setLabel(lab('MÚSICA', s.music)); } },
+      { label: lab('DICAS', s.hints), onClick: (c, b) => { s.hints = !s.hints; GDC.Settings.save(); b.setLabel(lab('DICAS', s.hints)); } },
       { label: 'VOLTAR', onClick: (c) => c.destroy() },
-    ], { height: 520 });
+    ], { height: 600 });
   }
 
   quit() {
