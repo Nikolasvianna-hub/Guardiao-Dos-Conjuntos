@@ -30,7 +30,7 @@ Todas as respostas são geradas por código a partir de conjuntos reais e provad
 
 ## 🧙 Enredo
 
-O Guardião, mestre da contagem, protege a Torre dos Elementos. O Paradoxo, um olho faminto de contradições, soltou seus servos em balões sobre a torre. Para defendê-la, o Guardião desenha símbolos de conjuntos no ar e o feitiço faz cada servo explodir.
+O Guardião, mestre da contagem, protege a Castelo dos Elementos. O Paradoxo, um olho faminto de contradições, soltou seus servos em balões sobre o castelo. Para defendê-la, o Guardião desenha símbolos de conjuntos no ar e o feitiço faz cada servo explodir.
 
 Versão completa em [`docs/enredo.md`](docs/enredo.md).
 

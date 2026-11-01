@@ -9,13 +9,13 @@ class StoryScene extends Phaser.Scene {
     this.add.image(W / 2, 0, 'bg_tower').setOrigin(0.5, 0).setScale(H / 1376);
     this.add.rectangle(W / 2, H / 2, W, H, 0x0d0f26, 0.7);
     this.pages = this.epilogue ? [
-      { img: 'wizard_cast', text: 'O Olho do Paradoxo se desfez em mil símbolos. Os elementos voltaram às suas ilhas, e cada conjunto reencontrou o seu lugar.' },
+      { img: 'wizard_cast', text: 'O Rei Paradoxo estourou em mil símbolos. Os elementos voltaram às suas ilhas, e cada conjunto reencontrou o seu lugar.' },
       { img: 'emblem', text: 'O Reino dos Conjuntos respirou aliviado. Mas o Paradoxo é feito de dúvidas, e elas sempre voltam. Continue treinando, Guardião!' },
     ] : [
-      { img: 'emblem', text: 'No Reino dos Conjuntos, a Torre dos Elementos guarda tudo o que existe: cada cristal, cada livro, cada número. Lá vive o Guardião, mestre da contagem.' },
-      { img: 'paradox', text: 'Numa noite sem estrelas, o Paradoxo, um olho faminto de contradições, embaralhou os conjuntos e soltou seus servos em balões sobre a torre.' },
-      { img: 'wizard_cast', text: 'Só o Guardião pode defender a torre. Cada balão traz uma pergunta de conjuntos. Desenhe o símbolo certo no ar e o feitiço faz o servo explodir!' },
-      { img: 'wizard_idle', text: 'Defenda a torre em 5 fases e derrote o Olho do Paradoxo. Cuidado: se os balões chegarem à linha dourada, você perde um coração!' },
+      { img: 'emblem', text: 'No Reino dos Conjuntos, o Castelo dos Elementos guarda tudo o que existe: cada cristal, cada livro, cada número. Lá vive o Guardião, mestre da contagem.' },
+      { img: 'paradox', text: 'Numa noite sem estrelas, o Paradoxo, uma criatura faminta de contradições, embaralhou os conjuntos e soltou seus servos presos a balões sobre o castelo.' },
+      { img: 'wizard_cast', text: 'Só o Guardião pode defender o castelo. Cada balão traz uma pergunta de conjuntos. Desenhe o símbolo certo no ar e o feitiço faz o servo explodir!' },
+      { img: 'wizard_idle', text: 'Defenda o castelo em 5 fases e derrote o Rei Paradoxo. Cuidado: se os balões chegarem à linha dourada, você perde um coração!' },
     ];
     this.i = 0;
     this.dots = this.pages.map((_, k) => this.add.circle(W / 2 - (this.pages.length - 1) * 14 + k * 28, H - 40, 7, GDC.C.gold));

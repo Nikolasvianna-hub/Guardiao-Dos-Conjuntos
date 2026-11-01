@@ -1,7 +1,7 @@
 # Instruções do jogo
 
 ## Objetivo
-Defender a torre: explodir cada inimigo antes que ele passe da linha dourada.
+Defender o castelo: explodir cada inimigo antes que ele passe da linha dourada.
 
 ## Como jogar
 1. Cada inimigo desce preso a um balão com um desafio de conjuntos.
@@ -9,7 +9,7 @@ Defender a torre: explodir cada inimigo antes que ele passe da linha dourada.
 3. Com o dedo (ou mouse), **desenhe em qualquer lugar da tela** o símbolo que responde ao desafio.
 4. Acertou: o inimigo explode, você ganha pontos e o combo sobe. Errou: o jogo mostra o símbolo que entendeu ("parece ∩") e o combo zera.
 5. Balão que passa da linha dourada tira um coração. Com 0 corações, a fase recomeça.
-6. O botão **?** mostra o traço certo. Depois de dois erros no mesmo balão, o traço-guia aparece sozinho.
+6. **Dicas** (podem ser ligadas ou desligadas em Opções ou na Pausa): o botão **?** mostra o traço certo, o traço-guia aparece sozinho depois de dois erros e o jogo explica cada acerto. Com as dicas desligadas, o jogo fica no modo desafio.
 
 ## Símbolos
 | Símbolo | Desenho | Significado |
@@ -27,6 +27,6 @@ Defender a torre: explodir cada inimigo antes que ele passe da linha dourada.
 2. Pertinência e União: ∈, ⊂, ∪, ∩ e ∅ com elementos.
 3. Cardinalidade: |A| e |A ∩ B|, |A ∪ B| com elementos listados.
 4. Inclusão e Exclusão: |A ∪ B| = |A| + |B| − |A ∩ B|.
-5. O Olho do Paradoxo: tudo junto, com balões duplos e um chefão de 3 desafios.
+5. O Rei Paradoxo: tudo junto, com balões duplos e um chefão de 3 desafios.
 
 Estrelas: 3 sem perder coração, 2 perdendo até 2, 1 caso contrário.
