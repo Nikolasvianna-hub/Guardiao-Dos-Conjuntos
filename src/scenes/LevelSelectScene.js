@@ -11,9 +11,9 @@ class LevelSelectScene extends Phaser.Scene {
     GDC.Audio.playMusic(this, 'menu');
     const all = /[?&]all=1/.test(window.location.search);
     const unlocked = all ? 99 : GDC.Settings.data.unlocked;
-    const L = GDC.Challenges.LEVELS, cw = 480, ch = 124;
+    const L = GDC.Challenges.LEVELS, cw = 480, ch = 104;
     L.forEach((lv, i) => {
-      const open = i + 1 <= unlocked, y = 205 + i * (ch + 18);
+      const open = i + 1 <= unlocked, y = 190 + i * (ch + 14);
       const c = this.add.container(W / 2, y);
       const g = this.add.graphics();
       g.fillStyle(GDC.C.ink, 1).fillRoundedRect(-cw / 2 - 5, -ch / 2 - 5, cw + 10, ch + 12, 22);
@@ -21,10 +21,10 @@ class LevelSelectScene extends Phaser.Scene {
       g.fillStyle(open ? GDC.C.violet : 0x3a3a55, 1).fillRoundedRect(-cw / 2 + 6, -ch / 2 + 6, cw - 12, ch - 8, 15);
       c.add(g);
       c.add(GDC.UI.text(this, -cw / 2 + 52, 0, String(i + 1), 64, open ? GDC.CSS.gold : GDC.CSS.dim, { fontFamily: GDC.FONT, strokeThickness: 8 }));
-      c.add(this.add.text(-cw / 2 + 100, -26, lv.name, { fontFamily: GDC.FONT_BODY, fontSize: '23px', color: GDC.CSS.cream, stroke: GDC.CSS.ink, strokeThickness: 4 }).setOrigin(0, 0.5));
-      c.add(this.add.text(-cw / 2 + 100, 8, lv.concept, { fontFamily: GDC.FONT_BODY, fontSize: '16px', color: GDC.CSS.soft }).setOrigin(0, 0.5));
+      c.add(this.add.text(-cw / 2 + 100, -22, lv.name, { fontFamily: GDC.FONT_BODY, fontSize: '23px', color: GDC.CSS.cream, stroke: GDC.CSS.ink, strokeThickness: 4 }).setOrigin(0, 0.5));
+      c.add(this.add.text(-cw / 2 + 100, 6, lv.concept, { fontFamily: GDC.FONT_BODY, fontSize: '16px', color: GDC.CSS.soft }).setOrigin(0, 0.5));
       const st = GDC.Settings.data.stars[lv.id] || 0;
-      c.add(this.add.text(-cw / 2 + 100, 40, open ? '★'.repeat(st) + '☆'.repeat(3 - st) : 'BLOQUEADA', { fontFamily: GDC.FONT_BODY, fontSize: open ? '26px' : '16px', color: open ? GDC.CSS.gold : GDC.CSS.dim, stroke: GDC.CSS.ink, strokeThickness: 4 }).setOrigin(0, 0.5));
+      c.add(this.add.text(-cw / 2 + 100, 34, open ? '★'.repeat(st) + '☆'.repeat(3 - st) : 'BLOQUEADA', { fontFamily: GDC.FONT_BODY, fontSize: open ? '24px' : '16px', color: open ? GDC.CSS.gold : GDC.CSS.dim, stroke: GDC.CSS.ink, strokeThickness: 4 }).setOrigin(0, 0.5));
       if (open) {
         const hit = this.add.rectangle(0, 0, cw, ch, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
         c.add(hit);

@@ -22,11 +22,18 @@ Nenhuma resposta é digitada à mão. `src/challenges.js` monta cada desafio a p
 | Inclusão e exclusão | "\|A\|=5 \|B\|=4 \|A∪B\|=7 \|A∩B\|=?" | 2 | 5 + 4 − 7 |
 | Inclusão e exclusão | "\|A − B\| = ?" | dígito | \|A\| − \|A∩B\| |
 
+| Complemento | "\|U\| = 8  \|A\| = 3  \|Aᶜ\| = ?" | 5 | \|U\| − \|A\| |
+| Inclusão e exclusão (3 conjuntos) | "\|A\|=5 \|B\|=4 \|C\|=4, interseções dadas, \|A∪B∪C\|=?" | dígito | \|A\|+\|B\|+\|C\| − \|A∩B\| − \|A∩C\| − \|B∩C\| + \|A∩B∩C\| |
+| Inclusão e exclusão (3 conjuntos) | mesma fórmula, perguntando \|A∩B∩C\| | dígito | isola a interseção tripla |
+| Problema contextualizado | "7 alunos gostam de futebol, 4 de vôlei e 2 de ambas. Quantos gostam de pelo menos uma?" | 9 | 7 + 4 − 2 |
+| Problema contextualizado | "...só de futebol?" | 5 | 7 − 2 |
+| Problema contextualizado | "A turma tem 9... não gostam de nenhuma?" | dígito | total − união |
+
 Respostas numéricas ficam sempre entre 1 e 9 (dígito desenhável).
 
 ## Prova automática
 ```bash
-node tests/test_challenges.js   # 5 fases x 3000 sementes, recontando com conjuntos reais
+node tests/test_challenges.js   # 6 fases x 3000 sementes, incluindo conjuntos reais montados região a região para 3 conjuntos e problemas de turma, recontando com conjuntos reais
 node tests/test_gestures.js     # taxa de acerto do reconhecedor com traços simulados e tremidos
 ```
 O teste confere cada resposta por uma contagem independente, rejeita resultado ambíguo (união igual à interseção), dígito zero e travessão nos textos.

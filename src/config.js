@@ -23,10 +23,11 @@ const GDC = {
 
 // Textos de ajuda usados no menu e dentro da fase
 GDC.HOWTO =
-  'Inimigos descem com balões. Cada balão mostra um desafio de conjuntos.\n\n' +
-  'DESENHE com o dedo (ou mouse) o símbolo que responde ao desafio e o inimigo explode.\n\n' +
-  'O alvo é sempre o inimigo mais baixo. Se um inimigo chegar à linha dourada, você perde um coração.\n\n' +
-  'Acertos em sequência dão COMBO e mais pontos. Errou o desenho? O jogo mostra o símbolo que ele entendeu. O botão ? mostra o traço certo.';
+  '1. Inimigos descem presos a balões. Cada balão traz um desafio de conjuntos.\n' +
+  '2. Resolva o desafio e DESENHE a resposta com o dedo (ou mouse), em qualquer lugar da tela: um símbolo (∪ ∩ ∈ ⊂ ∅) ou um número de 1 a 9.\n' +
+  '3. Acertou: o inimigo explode. O alvo é sempre o mais baixo.\n' +
+  '4. Se um inimigo passar da linha de defesa, você perde um coração. Com 0, a fase recomeça.\n' +
+  '5. Botão ? mostra o traço certo (dicas podem ser desligadas nas Opções).';
 GDC.GLOSSARY =
   '∪  união: está em A ou em B\n' +
   '∩  interseção: está em A e em B\n' +
@@ -34,6 +35,8 @@ GDC.GLOSSARY =
   '⊂  está contido: A ⊂ B\n' +
   '∅  conjunto vazio\n' +
   '−  diferença: A − B\n' +
-  '|A|  cardinalidade: quantos elementos\n\n' +
-  '|A ∪ B| = |A| + |B| − |A ∩ B|\n\n' +
+  '|A|  cardinalidade: quantos elementos\n' +
+  'Aᶜ  complemento: o que está fora de A\n\n' +
+  '|A ∪ B| = |A| + |B| − |A ∩ B|\n' +
+  '|A∪B∪C| = |A|+|B|+|C| − |A∩B| − |A∩C| − |B∩C| + |A∩B∩C|\n\n' +
   'Dígitos 1 a 9: desenhe o número quando o balão pedir uma contagem.';
