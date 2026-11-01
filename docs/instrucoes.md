@@ -1,17 +1,30 @@
-## Como jogar
+# Como jogar
 
-O jogo funciona em celular, tablet e computador. No celular, toque nos botões e desenhe com o dedo; no computador, use o mouse. Não é necessário teclado.
+O jogo roda no navegador, no computador e no celular (em **paisagem**: gire o aparelho).
 
-Na tela inicial, escolha **Jogar** e selecione um modo:
+## Controles
+| Ação | Teclado | Celular |
+|---|---|---|
+| Andar | setas ou A / D | botões ◀ ▶ |
+| Pular | espaço, ↑ ou W (segure para pular mais alto) | botão ▲ |
+| Conjurar feitiço | Z, X, J, K ou Shift | botão ✦ |
+| Pausar | Esc ou P | ícone de engrenagem |
+| Dica da fase | ícone (?) | ícone (?) |
 
-- **Quiz com tempo:** responda antes de o cronômetro terminar. Acertos rápidos valem mais pontos.
-- **Quiz sem tempo:** responda no seu ritmo. Respostas erradas ainda consomem uma vida.
-- **Desenho de símbolos:** faça um único traço na área de desenho e toque em **Conjurar**. Para união, desenhe um `U` começando e terminando no alto. Para interseção, desenhe `∩` começando e terminando embaixo. **Limpar** apaga o traço atual.
+Também funciona com controle (gamepad): direcional ou analógico, A para pular, X ou B para conjurar.
 
-Cada rodada mostra uma dica quando disponível. Há três vidas; uma resposta errada ou o fim do tempo tira uma vida e faz o inimigo avançar. Acerte para derrotá-lo e proteger o castelo. Complete os desafios para vencer. A pontuação e as vidas aparecem no topo.
+## Objetivo
+Em cada fase, resolva o desafio de conjuntos e entre no portal brilhante no fim do caminho. Você tem 5 corações. Erros de matemática, quedas e inimigos custam um coração. Perdeu todos? A fase recomeça com **números novos**.
 
-Os desafios cobrem cardinalidade, princípio da inclusão e exclusão com dois e três conjuntos, leitura de diagramas de Venn e problemas contextualizados.
+## Fases
+1. **Biblioteca Flutuante.** Fase tutorial: andar, pular, conjurar, e o primeiro desafio. Pegue só os cristais azuis (x ∈ A) e evite os vermelhos (x ∉ A). O portal abre com os |A| elementos.
+2. **Pontes de Venn.** Cada pedra tem uma região do diagrama (A, B, A∩B ou fora). Pise só nas que satisfazem a regra da ponte (A∪B, A∩B, A−B, (A∪B)ᶜ). As outras desmoronam.
+3. **Câmara dos Ecos.** Colete os elementos **distintos** de A∪B. Elementos dourados aparecem nas duas alas, mas valem um só. Pegar o "eco" depois do original é erro.
+4. **Covil do Paradoxo.** O mesmo desafio com três conjuntos A, B e C.
+5. **O Olho do Paradoxo (chefe).** Leia a regra do chefe (por exemplo A∩B), fique na plataforma da região certa (azul = A, roxa = B, dourada = A∩B, chão = fora) e conjure. Região errada cura o chefe.
+
+## Para apresentar rápido
+Abra o endereço do jogo com `?all=1` no final (por exemplo `.../Guardiao-Dos-Conjuntos/?all=1`) para liberar todas as fases. Use `?touch=1` para ver os botões de toque no computador.
 
 ## Áudio
-
-O jogo inclui trilhas chiptune originais geradas no navegador e efeitos sonoros. Os controles de som e música ficam em **Opções** e as preferências são salvas neste aparelho.
+Trilha e efeitos são gerados no navegador. Os botões de som e música ficam em **Opções** no menu.
