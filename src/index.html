@@ -13,17 +13,17 @@
       -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
     #game { width: 100%; height: 100%; }
     canvas { display: block; }
-    /* Aviso para girar o celular (o jogo e em paisagem) */
+    /* Aviso para girar o celular (o jogo e em retrato) */
     #rotate { display: none; position: fixed; inset: 0; z-index: 10; background: #0d0f26; color: #FFF3D1;
       font: 28px 'Lilita One', sans-serif; text-align: center; align-items: center; justify-content: center; flex-direction: column; }
     #rotate div { font-size: 64px; margin-bottom: 12px; animation: tilt 1.6s ease-in-out infinite; }
-    @keyframes tilt { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-90deg); } }
-    @media (pointer: coarse) and (orientation: portrait) { #rotate { display: flex; } }
+    @keyframes tilt { 0%,100% { transform: rotate(-90deg); } 50% { transform: rotate(0); } }
+    @media (pointer: coarse) and (orientation: landscape) and (max-height: 520px) { #rotate { display: flex; } }
   </style>
 </head>
 <body>
   <div id="game"></div>
-  <div id="rotate"><div>📱</div>Gire o celular<br>para jogar</div>
+  <div id="rotate"><div>📱</div>Deixe o celular em pé<br>para jogar</div>
   <noscript>Ative o JavaScript para jogar.</noscript>
 
   <script src="lib/phaser.min.js"></script>
@@ -31,14 +31,13 @@
   <script src="settings.js"></script>
   <script src="audio.js"></script>
   <script src="ui.js"></script>
-  <script src="mathgen.js"></script>
-  <script src="levels.js"></script>
-  <script src="controls.js"></script>
+  <script src="gestures.js"></script>
+  <script src="challenges.js"></script>
   <script src="scenes/BootScene.js"></script>
   <script src="scenes/MenuScene.js"></script>
   <script src="scenes/StoryScene.js"></script>
   <script src="scenes/LevelSelectScene.js"></script>
-  <script src="scenes/PlatformScene.js"></script>
+  <script src="scenes/MagicScene.js"></script>
   <script src="scenes/Main.js"></script>
 </body>
 </html>

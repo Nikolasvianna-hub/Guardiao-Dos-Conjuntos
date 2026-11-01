@@ -19,6 +19,7 @@ class BootScene extends Phaser.Scene {
   }
 
   create() {
+    GDC.UI.buildVenn(this);
     this.scene.start('MenuScene');
   }
 }

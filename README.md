@@ -20,33 +20,36 @@
 
 **Guardião dos Conjuntos** é um jogo desenvolvido como **Projeto Aplicado** da disciplina de Matemática Discreta, no curso de **Análise e Desenvolvimento de Sistemas** da **Universidade de Fortaleza (UNIFOR)**, semestre **2026.2**.
 
-A ideia é facilitar o aprendizado de matemática para jovens em ambientes escolares, transformando o estudo de conjuntos em uma aventura de plataforma 2D com visual de desenho animado. A matemática é a **mecânica**: portas, pontes e chefe dependem de conjuntos. O jogo roda direto no navegador, sem instalação, em computador e celular (em paisagem).
+A ideia é facilitar o aprendizado de matemática para jovens em ambientes escolares, no estilo do clássico **Magic Touch**: inimigos descem presos a balões, cada balão traz um desafio de conjuntos e o jogador **desenha o símbolo da resposta** (∪, ∩, ∈, ⊂, ∅ ou um dígito) com o dedo para o inimigo explodir. O jogo roda direto no navegador, sem instalação, no celular (em pé) e no computador.
 
 ## 📚 Conteúdo matemático
 
-O jogo trabalha pertinência, cardinalidade, união, interseção, diferença, complemento, regiões de diagramas de Venn e o princípio da inclusão e exclusão com dois e três conjuntos.
+O jogo trabalha os símbolos do glossário (união, interseção, pertence, está contido, conjunto vazio, diferença), diagramas de Venn, cardinalidade e o princípio da inclusão e exclusão.
 
-Os números de cada desafio são gerados por código e provados por teste (`node tests/test_mathgen.js`). Veja [`docs/gabarito.md`](docs/gabarito.md).
+Todas as respostas são geradas por código a partir de conjuntos reais e provadas por teste (`node tests/test_challenges.js`). Veja [`docs/gabarito.md`](docs/gabarito.md).
 
 ## 🧙 Enredo
 
-O Guardião, mestre da contagem, protege o Reino dos Conjuntos. O Paradoxo, um olho faminto de contradições, embaralhou os elementos e trancou os portais. Para restaurar a ordem, o Guardião atravessa 5 regiões usando conjuntos como magia.
+O Guardião, mestre da contagem, protege a Torre dos Elementos. O Paradoxo, um olho faminto de contradições, soltou seus servos em balões sobre a torre. Para defendê-la, o Guardião desenha símbolos de conjuntos no ar e o feitiço faz cada servo explodir.
 
 Versão completa em [`docs/enredo.md`](docs/enredo.md).
 
 ## 🕹️ Como jogar
 
-1. Abra o [link do jogo](https://nikolasvianna-hub.github.io/Guardiao-Dos-Conjuntos/) (no celular, gire para paisagem).
+1. Abra o [link do jogo](https://nikolasvianna-hub.github.io/Guardiao-Dos-Conjuntos/) (no celular, deixe em pé).
 2. Toque em **Jogar** e acompanhe a história.
-3. Em cada fase, resolva o desafio de conjuntos e entre no portal. 5 fases: cardinalidade, pontes de Venn, inclusão e exclusão (2 e 3 conjuntos) e o chefe.
-4. Erros custam um coração. Perdeu todos? A fase recomeça com números novos.
+3. Leia o balão do inimigo mais baixo e **desenhe o símbolo** que responde ao desafio. O botão **?** mostra o traço certo.
+4. São 5 fases: símbolos, pertinência e união, cardinalidade, inclusão e exclusão e o chefão. Balão que passa da linha dourada custa um coração.
 
-| Ação | Teclado | Celular |
+| Símbolo | Como desenhar | Aparece quando |
 | --- | --- | --- |
-| Andar | setas / A D | ◀ ▶ |
-| Pular | espaço / ↑ | ▲ |
-| Conjurar | Z / X | ✦ |
-| Dica | ícone (?) | ícone (?) |
+| ∪ | um U | união |
+| ∩ | um U de cabeça para baixo | interseção |
+| ∈ | um E deitado para a esquerda (ε) | pertence |
+| ⊂ | um C | está contido |
+| ∅ | um círculo cortado por uma barra | conjunto vazio |
+| − | uma linha reta | diferença |
+| 1 a 9 | o número | cardinalidade e inclusão e exclusão |
 
 Instruções completas em [`docs/instrucoes.md`](docs/instrucoes.md). Roteiro da apresentação em [`docs/roteiro_apresentacao.md`](docs/roteiro_apresentacao.md).
 
@@ -69,16 +72,15 @@ Instruções completas em [`docs/instrucoes.md`](docs/instrucoes.md). Roteiro da
 │   ├── instrucoes.md
 │   ├── gabarito.md
 │   └── roteiro_apresentacao.md
-├── tests/               # prova do gabarito (node tests/test_mathgen.js)
+├── tests/               # prova do gabarito (node tests/test_challenges.js e tests/test_gestures.js)
 ├── src/                 # código-fonte do jogo (esta pasta é publicada)
 │   ├── index.html
 │   ├── assets/img/      # desenhos (estilo desenho animado anos 30)
 │   ├── fonts/
 │   ├── lib/             # Phaser
-│   ├── scenes/          # Boot, Menu, História, Seleção de fases, Plataforma
-│   ├── levels.js        # as 5 fases e suas mecânicas
-│   ├── mathgen.js       # gerador de desafios e gabarito
-│   └── controls.js      # teclado, gamepad e botões de toque
+│   ├── scenes/          # Boot, Menu, História, Seleção de fases, Magic (jogo)
+│   ├── gestures.js      # reconhecedor de traços (símbolos e dígitos)
+│   └── challenges.js    # gerador de desafios e gabarito
 └── README.md
 ```
 

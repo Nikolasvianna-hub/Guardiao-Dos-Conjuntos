@@ -14,7 +14,6 @@ Promise.all([
     pixelArt: false,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     input: { activePointers: 4, gamepad: true },
-    physics: { default: 'arcade', arcade: { gravity: { y: 1500 }, debug: false } },
-    scene: [BootScene, MenuScene, StoryScene, LevelSelectScene, PlatformScene],
+    scene: [BootScene, MenuScene, StoryScene, LevelSelectScene, MagicScene],
   });
 });
