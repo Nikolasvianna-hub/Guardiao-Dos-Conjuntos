@@ -132,14 +132,75 @@
     return gCard(r);
   }
 
-  const ALL = { gName, gVenn, gMember, gSetOp, gEmpty, gCard, gCardOp, gIE };
+  /* ---- 8. Complemento: |A^c| = |U| - |A| ---- */
+  function gComp(r) {
+    const n = ri(r, 6, 9);
+    if (r() < 0.5) {
+      const a = ri(r, 2, n - 2);
+      return { kind: 'comp', answer: 'd' + (n - a), lines: [sub(`|U| = ${n}   |A| = ${a}`), main('|Aᶜ| = ?')], expl: `Fora de A: ${n} − ${a} = ${n - a}.`, proof: { type: 'comp', n, A: Array.from({ length: a }, (_, k) => k + 1) } };
+    }
+    const U = Array.from({ length: n }, (_, k) => k + 1), A = sample(r, U, ri(r, 2, n - 2));
+    return { kind: 'comp', answer: 'd' + (n - A.length), lines: [sub(`U = {1, ..., ${n}}`), sub(`A = ${fmt(A)}`), main('|Aᶜ| = ?')], expl: `Aᶜ tem o que está em U e não está em A: ${n} − ${A.length} = ${n - A.length}.`, proof: { type: 'comp', n, A } };
+  }
+
+  /* ---- 9. Inclusao e exclusao com 3 conjuntos ---- */
+  function gIE3(r) {
+    for (let tries = 0; tries < 500; tries++) {
+      const g = () => ri(r, 0, 2);
+      const reg = { a: g(), b: g(), c: g(), ab: g(), ac: g(), bc: g(), abc: ri(r, 1, 2) };
+      const A = reg.a + reg.ab + reg.ac + reg.abc, B = reg.b + reg.ab + reg.bc + reg.abc, Cc = reg.c + reg.ac + reg.bc + reg.abc;
+      const AB = reg.ab + reg.abc, AC = reg.ac + reg.abc, BC = reg.bc + reg.abc, ABC = reg.abc;
+      const u = reg.a + reg.b + reg.c + reg.ab + reg.ac + reg.bc + reg.abc;
+      if (u < 5 || u > 9 || A < 2 || B < 2 || Cc < 2) continue;
+      const shown = { A, B, C: Cc, AB, AC, BC, ABC };
+      const l1 = sub(`|A| = ${A}  |B| = ${B}  |C| = ${Cc}`), l2 = sub(`|A∩B| = ${AB}  |A∩C| = ${AC}`), l3 = sub(`|B∩C| = ${BC}  |A∩B∩C| = ${ABC}`);
+      if (r() < 0.65) return { kind: 'ie3', answer: 'd' + u, lines: [l1, l2, l3, main('|A ∪ B ∪ C| = ?')], expl: `${A}+${B}+${Cc} − ${AB} − ${AC} − ${BC} + ${ABC} = ${u}.`, proof: { type: 'ie3', reg, shown, ask: 'uni' } };
+      return { kind: 'ie3', answer: 'd' + ABC, lines: [sub(`|A| = ${A}  |B| = ${B}  |C| = ${Cc}`), sub(`|A∩B| = ${AB}  |A∩C| = ${AC}`), sub(`|B∩C| = ${BC}  |A∪B∪C| = ${u}`), main('|A∩B∩C| = ?')], expl: `${u} = ${A}+${B}+${Cc} − ${AB} − ${AC} − ${BC} + x, então x = ${ABC}.`, proof: { type: 'ie3', reg, shown, ask: 'tri' } };
+    }
+    return gIE(r);
+  }
+
+  /* ---- 10. Problema contextualizado (2 conjuntos) ---- */
+  const TEMAS = [['Matemática', 'Física'], ['futebol', 'vôlei'], ['pizza', 'hambúrguer'], ['rock', 'pop']];
+  function gContext(r) {
+    for (let tries = 0; tries < 300; tries++) {
+      const [X, Y] = pick(r, TEMAS);
+      const m = ri(r, 3, 7), f = ri(r, 3, 6), i = ri(r, 1, Math.min(m, f) - 1);
+      const u = m + f - i;
+      if (u > 9 || m - i < 1) continue;
+      const head = [sub(`${m} alunos gostam de ${X},`), sub(`${f} de ${Y} e ${i} de ambas.`)];
+      const v = pick(r, ['alguma', 'so', 'nenhuma']);
+      if (v === 'alguma') return { kind: 'ctx', answer: 'd' + u, lines: head.concat([sub('Quantos gostam de'), main('pelo menos uma?')]), expl: `${m} + ${f} − ${i} = ${u} alunos.`, proof: { type: 'ctx', m, f, i, ask: 'alguma' } };
+      if (v === 'so') return { kind: 'ctx', answer: 'd' + (m - i), lines: head.concat([sub('Quantos gostam'), main(`só de ${X}?`)]), expl: `${m} − ${i} = ${m - i} alunos.`, proof: { type: 'ctx', m, f, i, ask: 'so' } };
+      const T = ri(r, u + 1, 9);
+      if (T > 9 || u >= 9) continue;
+      return { kind: 'ctx', answer: 'd' + (T - u), lines: head.concat([sub(`A turma tem ${T}. Quantos`), main('não gostam de nenhuma?')]), expl: `${T} − ${u} = ${T - u} alunos fora dos dois conjuntos.`, proof: { type: 'ctx', m, f, i, T, ask: 'nenhuma' } };
+    }
+    return gIE(r);
+  }
+
+  const ALL = { gName, gVenn, gMember, gSetOp, gEmpty, gCard, gCardOp, gComp, gIE, gIE3, gContext };
+  const EVERY = Object.keys(ALL);
 
   C.LEVELS = [
-    { id: 1, name: 'Símbolos do Reino', concept: 'Glossário: ∪ ∩ ∈ ⊂ ∅', gens: ['gName', 'gVenn'], n: 8, speed: 56, gap: 5.0, maxOn: 2 },
-    { id: 2, name: 'Pertinência e União', concept: '∈  ⊂  ∪  ∩  ∅ com elementos', gens: ['gMember', 'gSetOp', 'gEmpty', 'gVenn'], n: 10, speed: 62, gap: 4.6, maxOn: 3 },
-    { id: 3, name: 'Cardinalidade', concept: '|A| = número de elementos', gens: ['gCard', 'gCardOp'], n: 10, speed: 62, gap: 5.0, maxOn: 3 },
-    { id: 4, name: 'Inclusão e Exclusão', concept: '|A∪B| = |A| + |B| − |A∩B|', gens: ['gIE', 'gCardOp'], n: 10, speed: 60, gap: 6.0, maxOn: 3 },
-    { id: 5, name: 'O Rei Paradoxo', concept: 'Tudo junto, com chefão', gens: ['gName', 'gVenn', 'gMember', 'gSetOp', 'gEmpty', 'gCard', 'gCardOp', 'gIE'], n: 12, speed: 68, gap: 5.2, maxOn: 3, boss: true },
+    { id: 1, name: 'Símbolos do Reino', concept: 'Glossário: ∪ ∩ ∈ ⊂ ∅', gens: ['gName', 'gVenn'], n: 8, speed: 56, gap: 5.0, maxOn: 2,
+      story: 'Os servos do Paradoxo chegam trazendo símbolos. Aprenda o glossário do Reino!',
+      how: 'Cada balão pede um símbolo. Desenhe o símbolo no ar. Exemplo: união pede ∪, um U.' },
+    { id: 2, name: 'Pertinência e União', concept: '∈  ⊂  ∪  ∩  ∅ com elementos', gens: ['gMember', 'gSetOp', 'gEmpty', 'gVenn'], n: 10, speed: 62, gap: 4.6, maxOn: 3,
+      story: 'Os servos esconderam elementos dentro de conjuntos. Descubra quem pertence a quem!',
+      how: 'Leia os conjuntos e desenhe o símbolo que liga um ao outro: ∈, ⊂, ∪, ∩ ou ∅.' },
+    { id: 3, name: 'Cardinalidade e Complemento', concept: '|A| e |Aᶜ| (quantos elementos)', gens: ['gCard', 'gCardOp', 'gComp'], n: 10, speed: 62, gap: 5.0, maxOn: 3,
+      story: 'O Paradoxo roubou números do Reino. Conte os elementos para recuperá-los!',
+      how: 'Agora a resposta é um NÚMERO. Conte e desenhe o dígito (1 a 9). |A| é a quantidade de elementos; Aᶜ é o que está fora de A.' },
+    { id: 4, name: 'Inclusão e Exclusão', concept: '|A∪B| = |A| + |B| − |A∩B|', gens: ['gIE', 'gContext', 'gCardOp'], n: 10, speed: 60, gap: 6.0, maxOn: 3,
+      story: 'Os servos se escondem em dois grupos ao mesmo tempo. Não conte ninguém duas vezes!',
+      how: 'Use |A∪B| = |A| + |B| − |A∩B| e desenhe o número. Problemas de turma funcionam igual.' },
+    { id: 5, name: 'Três Conjuntos', concept: '|A∪B∪C| com 3 conjuntos', gens: ['gIE3', 'gContext', 'gIE'], n: 10, speed: 58, gap: 7.0, maxOn: 3,
+      story: 'A Torre do Paradoxo tem três salas que se cruzam. Só a fórmula completa abre as portas!',
+      how: 'Some os três, tire as interseções de 2 conjuntos e some de volta a interseção dos 3. Desenhe o número.' },
+    { id: 6, name: 'O Rei Paradoxo', concept: 'Tudo junto, com chefão', gens: EVERY, n: 12, speed: 66, gap: 5.4, maxOn: 3, boss: true,
+      story: 'O Rei Paradoxo desce do céu em um balão sombrio. Use tudo o que aprendeu!',
+      how: 'Valem todos os tipos. Balões duplos têm 2 desafios em sequência. O Rei traz 3 desafios!' },
   ];
 
   /* Gera a lista de inimigos da fase. Cada inimigo tem 'items' (1 desafio; o chefao tem 3 em sequencia) */

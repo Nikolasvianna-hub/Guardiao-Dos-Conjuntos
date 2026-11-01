@@ -12,6 +12,7 @@ class BootScene extends Phaser.Scene {
     this.load.setPath('assets/img/');
     this.load.image('bg_tower', 'bg_castle.jpg');
     this.load.image('wizard_idle', 'wizard.png');
+    this.load.image('wizard_cast', 'wizard.png');
     ['paradox', 'emblem', 'panel', 'balloon_gold', 'boom1', 'boom2',
       'foe_goblin', 'foe_skeleton', 'foe_imp', 'foe_orc',
       'hud_heart', 'hud_score', 'hud_wave',

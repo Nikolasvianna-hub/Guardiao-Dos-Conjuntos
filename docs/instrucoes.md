@@ -22,11 +22,14 @@ Defender o castelo: explodir cada inimigo antes que ele passe da linha dourada.
 | − | linha reta | diferença |
 | 1 a 9 | o número | cardinalidade, inclusão e exclusão |
 
-## Fases
+## Fases (cada uma começa com um cartão de história e de como responder)
 1. Símbolos do Reino (tutorial com traço-guia): glossário e diagramas de Venn.
 2. Pertinência e União: ∈, ⊂, ∪, ∩ e ∅ com elementos.
-3. Cardinalidade: |A| e |A ∩ B|, |A ∪ B| com elementos listados.
-4. Inclusão e Exclusão: |A ∪ B| = |A| + |B| − |A ∩ B|.
-5. O Rei Paradoxo: tudo junto, com balões duplos e um chefão de 3 desafios.
+3. Cardinalidade e Complemento: |A|, |A ∩ B|, |A ∪ B| e |Aᶜ|.
+4. Inclusão e Exclusão: |A ∪ B| = |A| + |B| − |A ∩ B| e problemas de turma.
+5. Três Conjuntos: |A ∪ B ∪ C| com a fórmula completa.
+6. O Rei Paradoxo: tudo junto, com balões duplos e um chefão de 3 desafios.
+
+Em qualquer momento, o botão de pausa abre **Como jogar**, **Glossário** e o liga/desliga das dicas.
 
 Estrelas: 3 sem perder coração, 2 perdendo até 2, 1 caso contrário.

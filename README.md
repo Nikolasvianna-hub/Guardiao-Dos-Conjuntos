@@ -24,7 +24,7 @@ A ideia é facilitar o aprendizado de matemática para jovens em ambientes escol
 
 ## 📚 Conteúdo matemático
 
-O jogo trabalha os símbolos do glossário (união, interseção, pertence, está contido, conjunto vazio, diferença), diagramas de Venn, cardinalidade e o princípio da inclusão e exclusão.
+O jogo trabalha os símbolos do glossário (união, interseção, pertence, está contido, conjunto vazio, diferença), diagramas de Venn, cardinalidade, complemento e o princípio da inclusão e exclusão com 2 e 3 conjuntos, inclusive em problemas contextualizados (ex.: alunos que gostam de dois esportes).
 
 Todas as respostas são geradas por código a partir de conjuntos reais e provadas por teste (`node tests/test_challenges.js`). Veja [`docs/gabarito.md`](docs/gabarito.md).
 
@@ -39,7 +39,7 @@ Versão completa em [`docs/enredo.md`](docs/enredo.md).
 1. Abra o [link do jogo](https://nikolasvianna-hub.github.io/Guardiao-Dos-Conjuntos/) (no celular, deixe em pé).
 2. Toque em **Jogar** e acompanhe a história.
 3. Leia o balão do inimigo mais baixo e **desenhe o símbolo** que responde ao desafio. O botão **?** mostra o traço certo.
-4. São 5 fases: símbolos, pertinência e união, cardinalidade, inclusão e exclusão e o chefão. Balão que passa da linha dourada custa um coração.
+4. São 6 fases: símbolos, pertinência e união, cardinalidade e complemento, inclusão e exclusão, três conjuntos e o Rei Paradoxo. Balão que passa da linha dourada custa um coração.
 
 | Símbolo | Como desenhar | Aparece quando |
 | --- | --- | --- |

@@ -37,7 +37,7 @@ class MagicScene extends Phaser.Scene {
     this.input.on('pointerupoutside', (p) => this.onUp(p));
     GDC.Audio.playMusic(this, 'game');
 
-    if (this.index === 0) this.intro(); else this.beginLevel();
+    if (this.index === 0) this.intro(); else this.levelCard();
   }
 
   hints() { return GDC.Settings.data.hints; }
@@ -78,15 +78,22 @@ class MagicScene extends Phaser.Scene {
 
   intro() {
     this.state = 'dialog';
-    this.dlg = GDC.UI.dialog(this, 'COMO JOGAR',
-      'Inimigos descem presos a balões com desafios de conjuntos.\n\nDESENHE com o dedo o símbolo que responde ao desafio.\n\nExemplo: "A ? B  união" pede o símbolo ∪ (um U).\n\nNo começo, um traço-guia mostra como desenhar.',
-      [{ label: 'VAMOS LÁ!', onClick: (c) => { c.destroy(); this.beginLevel(); } }], { height: 700, fontSize: 21 });
+    this.dlg = GDC.UI.dialog(this, 'COMO JOGAR', GDC.HOWTO,
+      [{ label: 'ENTENDI', onClick: (c) => { c.destroy(); this.levelCard(); } }], { height: 760, fontSize: 19 });
+  }
+
+  // cartao de cada fase: historia curta + como responder (deixa claro como iniciar e avancar)
+  levelCard() {
+    this.state = 'dialog';
+    this.dlg = GDC.UI.dialog(this, `FASE ${this.lv.id}`,
+      `${this.lv.name.toUpperCase()}\n\n${this.lv.story}\n\nCOMO RESPONDER:\n${this.lv.how}`,
+      [{ label: 'COMEÇAR', onClick: (c) => { c.destroy(); this.beginLevel(); } }], { height: 720, fontSize: 20 });
   }
 
   beginLevel() {
     this.state = 'play';
-    const t = GDC.UI.title(this, GDC.W / 2, 400, `FASE ${this.lv.id}\n${this.lv.name.toUpperCase()}`, 60).setDepth(950);
-    this.tweens.add({ targets: t, alpha: 0, y: 360, delay: 1300, duration: 500, onComplete: () => t.destroy() });
+    const t = GDC.UI.title(this, GDC.W / 2, 400, 'VAI!', 90).setDepth(950);
+    this.tweens.add({ targets: t, alpha: 0, y: 360, scale: 1.3, delay: 500, duration: 500, onComplete: () => t.destroy() });
   }
 
   pause() {
@@ -96,9 +103,14 @@ class MagicScene extends Phaser.Scene {
     this.dlg = GDC.UI.dialog(this, 'PAUSA', 'O jogo está parado.', [
       { label: 'CONTINUAR', onClick: (c) => { c.destroy(); this.state = 'play'; } },
       { label: `DICAS: ${s.hints ? 'LIGADAS' : 'DESLIGADAS'}`, onClick: (c, b) => { s.hints = !s.hints; GDC.Settings.save(); b.setLabel(`DICAS: ${s.hints ? 'LIGADAS' : 'DESLIGADAS'}`); this.hideGhost(); if (!s.hints && this.helpBtn) this.helpBtn.setVisible(false); } },
+      { label: 'COMO JOGAR', onClick: (c) => { c.destroy(); this.howto(); } },
       { label: 'GLOSSÁRIO', onClick: (c) => { c.destroy(); this.glossary(); } },
       { label: 'MENU', onClick: (c) => { c.destroy(); this.leave('MenuScene'); } },
-    ], { height: 620 });
+    ], { height: 700 });
+  }
+
+  howto() {
+    this.dlg = GDC.UI.dialog(this, 'COMO JOGAR', `${GDC.HOWTO}\n\nFASE ${this.lv.id}: ${this.lv.how}`, [{ label: 'VOLTAR', onClick: (c) => { c.destroy(); this.state = 'play'; this.pause(); } }], { height: 820, fontSize: 18 });
   }
 
   glossary() {
@@ -127,6 +139,7 @@ class MagicScene extends Phaser.Scene {
       speed: this.lv.speed * (boss ? 0.7 : 1) * (this.index === 0 && this.spawned === 0 ? 0.65 : 1), dead: false };
     this.spawned++;
     this.setItem(e);
+    c.x = Phaser.Math.Clamp(c.x, e.bw / 2 + 6, GDC.W - e.bw / 2 - 6);
     if (foe) this.tweens.add({ targets: foe, angle: { from: -4, to: 4 }, duration: 700 + Math.random() * 300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     this.tweens.add({ targets: balloon, scaleY: { from: balloon.scaleY, to: balloon.scaleY * 1.03 }, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     this.enemies.push(e);
