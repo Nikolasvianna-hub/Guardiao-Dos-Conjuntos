@@ -18,7 +18,7 @@
 
 ## 📖 Sobre o projeto
 
-**Guardião dos Conjuntos** é um jogo desenvolvido como **Projeto Aplicado** da disciplina de Matemática Discreta, no curso de **Análise e Desenvolvimento de Sistemas** da **Universidade de Fortaleza (UNIFOR)**, semestre **2026.2**.
+**Guardião dos Conjuntos** é um jogo desenvolvido como **Projeto Aplicado** da disciplina de Matemática Para Computação, no curso de **Análise e Desenvolvimento de Sistemas** da **Universidade de Fortaleza (UNIFOR)**, semestre **2026.2**.
 
 A ideia é facilitar o aprendizado de matemática para jovens em ambientes escolares, no estilo do clássico **Magic Touch**: inimigos descem presos a balões, cada balão traz um desafio de conjuntos e o jogador **desenha o símbolo da resposta** (∪, ∩, ∈, ⊂, ∅ ou um dígito) com o dedo para o inimigo explodir. O jogo roda direto no navegador, sem instalação, no celular (em pé) e no computador.
 
