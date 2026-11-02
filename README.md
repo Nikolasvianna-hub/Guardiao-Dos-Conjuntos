@@ -55,12 +55,14 @@ Instruções completas em [`docs/instrucoes.md`](docs/instrucoes.md). Roteiro da
 
 ## 👥 Equipe
 
-| Nome | Função |
+| Nome | Matrícula |
 | --- | --- |
-| Nikolas Vianna | Desenvolvimento do jogo |
-| _[PREENCHER]_ | _[PREENCHER]_ |
+| Nikolas Vianna de Carvalho | 2623878 |
+| Vinicius Nascimento Barros | 2622683 |
+| João Pedro Lopes Marques de Almeida | 2426048 |
+| Pedro Victor Calisto de Araújo | 2622660 |
 
-**Disciplina:** Matemática Discreta · **Professor:** _[PREENCHER]_
+**Disciplina:** Matemática Discreta · **Professor:** Paulo Henrique Pereira Silva
 
 ## 🗂️ Estrutura do repositório
 
