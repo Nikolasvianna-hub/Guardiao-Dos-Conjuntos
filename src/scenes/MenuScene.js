@@ -40,7 +40,7 @@ class MenuScene extends Phaser.Scene {
       b.setAlpha(0);
       this.tweens.add({ targets: b, y, alpha: 1, duration: 450, delay: 200 + i * 100, ease: 'Back.easeOut' });
     });
-    this.add.text(W / 2, H - 10, 'Matemática Discreta · UNIFOR · Equipe 4', { fontFamily: GDC.FONT_BODY, fontSize: '14px', color: GDC.CSS.dim }).setOrigin(0.5, 1);
+    this.add.text(W / 2, H - 10, 'Matemática para Computação · UNIFOR · Equipe 4', { fontFamily: GDC.FONT_BODY, fontSize: '14px', color: GDC.CSS.dim }).setOrigin(0.5, 1);
   }
 
   play() {
