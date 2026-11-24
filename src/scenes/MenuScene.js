@@ -18,6 +18,8 @@ class MenuScene extends Phaser.Scene {
     this.tweens.add({ targets: emblem, y: 132, scale: 0.415, duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     const title = GDC.UI.title(this, W / 2, 300, 'GUARDIÃO\nDOS CONJUNTOS', 78).setAlpha(0).setAngle(-3);
     this.tweens.add({ targets: title, alpha: 1, angle: -2, duration: 700, ease: 'Back.easeOut' });
+    const tag = this.add.text(W / 2 + 105, 378, 'NOVO: MULTI + PODERES!', { fontFamily: GDC.FONT_BODY, fontSize: '20px', color: GDC.CSS.ink, backgroundColor: '#F2B84B', padding: { x: 10, y: 4 } }).setOrigin(0.5).setAngle(-6);
+    this.tweens.add({ targets: tag, scale: 1.08, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
     const wiz = this.add.image(120, H + 6, 'wizard_idle').setOrigin(0.5, 1);
     const ws = 235 / wiz.height; wiz.setScale(ws);
