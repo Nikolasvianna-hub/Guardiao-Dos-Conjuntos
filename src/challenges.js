@@ -229,6 +229,17 @@
     }
     return enemies;
   };
+  /* Balao magico (poder): sempre um desafio curto do glossario, para nao travar o ritmo */
+  C.POWERS = {
+    gelo:  { icon: '❄', label: 'GELO',  tint: 0x9fe8ff, desc: 'Congela os balões por alguns segundos.' },
+    raio:  { icon: '⚡', label: 'RAIO',  tint: 0xd7b8ff, desc: 'Estoura o inimigo mais baixo.' },
+    vida:  { icon: '❤', label: 'VIDA',  tint: 0xffb3b8, desc: 'Recupera um coração.' },
+  };
+  C.powerItem = function (seed, avoid) {
+    const r = C.rng(seed);
+    return r() < 0.5 ? gName(r, avoid) : gVenn(r, avoid);
+  };
+
   function gNameFor(k) { return { kind: 'nome', answer: k, lines: NAMES[k], expl: EXPL[k], proof: { type: 'nome', glyph: k } }; }
   function shuffleKeepStart(r, arr) { const head = arr[0], rest = shuffle(r, arr.slice(1)); return [head].concat(rest); }
 

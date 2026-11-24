@@ -19,15 +19,23 @@ const GDC = {
   // Jogo
   LIVES: 5,
   SHOW_QUIT: true,
+
+  // Estilo Magic Touch
+  POWER_EVERY: 5,      // a cada N inimigos surge um balao magico (gelo, raio ou vida)
+  FREEZE_SECONDS: 4,   // duracao do gelo
+
+  // Link do questionario de avaliacao (Google Forms). Vazio = botao AVALIAR escondido no menu.
+  FEEDBACK_URL: '',
 };
 
 // Textos de ajuda usados no menu e dentro da fase
 GDC.HOWTO =
   '1. Inimigos descem presos a balões. Cada balão traz um desafio de conjuntos.\n' +
   '2. Resolva o desafio e DESENHE a resposta com o dedo (ou mouse), em qualquer lugar da tela: um símbolo (∪ ∩ ∈ ⊂ ∅) ou um número de 1 a 9.\n' +
-  '3. Acertou: o inimigo explode. O alvo é sempre o mais baixo.\n' +
-  '4. Se um inimigo passar da linha de defesa, você perde um coração. Com 0, a fase recomeça.\n' +
-  '5. Botão ? mostra o traço certo (dicas podem ser desligadas nas Opções).';
+  '3. TODOS os balões com aquela resposta estouram juntos: estoure vários de uma vez para ganhar MULTI!\n' +
+  '4. Balões mágicos (❄ gelo, ⚡ raio, ❤ vida) dão poderes. O inimigo mais baixo brilha e fica vermelho perto da linha.\n' +
+  '5. Inimigo que passa da linha de defesa tira um coração. Com 0, a fase recomeça.\n' +
+  '6. Botão ? mostra o traço certo (dicas podem ser desligadas nas Opções).';
 GDC.GLOSSARY =
   '∪  união: está em A ou em B\n' +
   '∩  interseção: está em A e em B\n' +

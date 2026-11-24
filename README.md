@@ -38,7 +38,7 @@ Versão completa em [`docs/enredo.md`](docs/enredo.md).
 
 1. Abra o [link do jogo](https://nikolasvianna-hub.github.io/Guardiao-Dos-Conjuntos/) (no celular, deixe em pé).
 2. Toque em **Jogar** e acompanhe a história.
-3. Leia o balão do inimigo mais baixo e **desenhe o símbolo** que responde ao desafio. O botão **?** mostra o traço certo.
+3. Leia os balões e **desenhe o símbolo** que responde ao desafio: todos os balões com aquela resposta estouram juntos (**MULTI**). Balões mágicos dão poderes: ❄ gelo, ⚡ raio e ❤ vida. O botão **?** mostra o traço certo.
 4. São 6 fases: símbolos, pertinência e união, cardinalidade e complemento, inclusão e exclusão, três conjuntos e o Rei Paradoxo. Balão que passa da linha dourada custa um coração.
 
 | Símbolo | Como desenhar | Aparece quando |

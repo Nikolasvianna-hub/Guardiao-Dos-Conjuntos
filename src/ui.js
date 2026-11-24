@@ -123,6 +123,24 @@ GDC.UI = {
     });
   },
 
+  // Baloes magicos (estilo Magic Touch): oval colorido, contorno de tinta e brilho
+  buildPowerBalloons(scene) {
+    const cols = { gelo: ['#6fd8ff', '#2a8fd6'], raio: ['#c9a2ff', '#7a45e0'], vida: ['#ff8f98', '#d8364a'] };
+    Object.entries(cols).forEach(([k, [light, dark]]) => {
+      const key = 'balloon_' + k;
+      if (scene.textures.exists(key)) return;
+      const t = scene.textures.createCanvas(key, 260, 300), x = t.getContext();
+      const g = x.createRadialGradient(100, 95, 20, 130, 140, 150);
+      g.addColorStop(0, light); g.addColorStop(1, dark);
+      x.beginPath(); x.ellipse(130, 140, 118, 132, 0, 0, Math.PI * 2);
+      x.fillStyle = g; x.fill(); x.lineWidth = 10; x.strokeStyle = '#0a0618'; x.stroke();
+      x.beginPath(); x.moveTo(116, 270); x.lineTo(144, 270); x.lineTo(130, 292); x.closePath();
+      x.fillStyle = dark; x.fill(); x.lineWidth = 6; x.stroke();
+      x.beginPath(); x.ellipse(82, 78, 26, 40, -0.5, 0, Math.PI * 2); x.fillStyle = 'rgba(255,255,255,0.45)'; x.fill();
+      t.refresh();
+    });
+  },
+
   goTo(scene, key, data) {
     const cam = scene.cameras.main;
     cam.fadeOut(260, 10, 6, 24);
