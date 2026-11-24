@@ -33,6 +33,7 @@ class MenuScene extends Phaser.Scene {
       ['GLOSSÁRIO', 'icon_book', () => this.studies()],
       ['OPÇÕES', 'icon_gear', () => this.options()],
     ];
+    if (GDC.FEEDBACK_URL) items.push(['AVALIAR', 'icon_book', () => window.open(GDC.FEEDBACK_URL, '_blank')]);
     if (GDC.SHOW_QUIT) items.push(['SAIR', 'icon_door', () => this.quit()]);
     items.forEach(([label, icon, fn], i) => {
       const y = 430 + i * 74;

@@ -5,11 +5,12 @@ Defender o castelo: explodir cada inimigo antes que ele passe da linha dourada.
 
 ## Como jogar
 1. Cada inimigo desce preso a um balão com um desafio de conjuntos.
-2. O alvo é sempre o inimigo mais baixo (balão com borda dourada).
+2. Como no Magic Touch, **o símbolo desenhado estoura TODOS os balões que pedem aquela resposta**. Estourar dois ou mais de uma vez dá **MULTI** (pontos multiplicados). O inimigo mais baixo brilha e o balão pisca em vermelho quando chega perto da linha.
 3. Com o dedo (ou mouse), **desenhe em qualquer lugar da tela** o símbolo que responde ao desafio.
 4. Acertou: o inimigo explode, você ganha pontos e o combo sobe. Errou: o jogo mostra o símbolo que entendeu ("parece ∩") e o combo zera.
-5. Balão que passa da linha dourada tira um coração. Com 0 corações, a fase recomeça.
-6. **Dicas** (podem ser ligadas ou desligadas em Opções ou na Pausa): o botão **?** mostra o traço certo, o traço-guia aparece sozinho depois de dois erros e o jogo explica cada acerto. Com as dicas desligadas, o jogo fica no modo desafio.
+5. **Balões mágicos** (a cada 5 inimigos): ❄ **Gelo** congela os balões por 4 s, ⚡ **Raio** estoura o inimigo mais baixo, ❤ **Vida** devolve um coração. Também trazem um desafio do glossário e, se escaparem, não tiram coração.
+6. Balão que passa da linha dourada tira um coração. Com 0 corações, a fase recomeça.
+7. **Dicas** (podem ser ligadas ou desligadas em Opções ou na Pausa): o botão **?** mostra o traço certo, o traço-guia aparece sozinho depois de dois erros e o jogo explica cada acerto. Com as dicas desligadas, o jogo fica no modo desafio.
 
 ## Símbolos
 | Símbolo | Desenho | Significado |

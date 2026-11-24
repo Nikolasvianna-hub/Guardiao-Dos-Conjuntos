@@ -15,7 +15,7 @@ class BootScene extends Phaser.Scene {
     this.load.image('wizard_cast', 'wizard.png');
     ['paradox', 'emblem', 'panel', 'balloon_gold', 'boom1', 'boom2',
       'foe_goblin', 'foe_skeleton', 'foe_imp', 'foe_orc',
-      'hud_heart', 'hud_score', 'hud_wave',
+      'hud_heart', 'hud_score', 'hud_wave', 'hud_coin',
       'sym_cup', 'sym_cap', 'sym_elem', 'sym_subset', 'sym_empty',
       'spark_big', 'spark_small', 'spark_star',
       'icon_play', 'icon_door', 'icon_gear', 'icon_book', 'icon_help', 'icon_close',
@@ -24,6 +24,7 @@ class BootScene extends Phaser.Scene {
 
   create() {
     GDC.UI.buildVenn(this);
+    GDC.UI.buildPowerBalloons(this);
     this.scene.start('MenuScene');
   }
 }
