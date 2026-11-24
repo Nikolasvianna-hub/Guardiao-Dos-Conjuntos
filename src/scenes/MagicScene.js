@@ -26,7 +26,7 @@ class MagicScene extends Phaser.Scene {
     this.enemies = []; this.target = null; this.killed = 0;
     this.lives = GDC.LIVES; this.livesLost = 0; this.score = 0; this.combo = 0; this.bestCombo = 0;
     this.spawnClock = 1.2; this.spawned = 0; this.lastX = -999;
-    this.freezeT = 0; this.sinceP = 0; this.powerDue = -1; this.iceFx = null;
+    this.freezeT = 0; this.sinceP = GDC.POWER_EVERY - 2; this.powerDue = -1; this.iceFx = null;
     this.stroke = null; this.pending = null; this.ghost = null;
     this.state = 'intro';
 
@@ -87,7 +87,7 @@ class MagicScene extends Phaser.Scene {
   levelCard() {
     this.state = 'dialog';
     this.dlg = GDC.UI.dialog(this, `FASE ${this.lv.id}`,
-      `${this.lv.name.toUpperCase()}\n\n${this.lv.story}\n\nCOMO RESPONDER:\n${this.lv.how}`,
+      `${this.lv.name.toUpperCase()}\n\n${this.lv.story}\n\nCOMO RESPONDER:\n${this.lv.how}\n\nNOVO: balões com a MESMA resposta estouram juntos com um só traço. Balões mágicos ❄ ⚡ ❤ dão poderes!`,
       [{ label: 'COMEÇAR', onClick: (c) => { c.destroy(); this.beginLevel(); } }], { height: 720, fontSize: 20 });
   }
 
@@ -122,7 +122,8 @@ class MagicScene extends Phaser.Scene {
 
   /* ---------- inimigos: balao dourado com placa de texto, preso a um servo ---------- */
   spawn(power) {
-    const item = power ? { items: [GDC.Challenges.powerItem((Math.random() * 1e9) | 0)], boss: false } : this.queue.shift();
+    const want = power && this.target && !this.target.dead ? this.target.items[this.target.idx].answer : null;
+    const item = power ? { items: [GDC.Challenges.powerItem((Math.random() * 1e9) | 0, want && want[0] !== 'd' && Math.random() < 0.6 ? want : null)], boss: false } : this.queue.shift();
     let x = 0;
     for (let k = 0; k < 20; k++) { x = 150 + Math.random() * 240; if (Math.abs(x - this.lastX) > 110) break; }
     this.lastX = x;

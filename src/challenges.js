@@ -208,7 +208,9 @@
     const lv = C.LEVELS[index], r = C.rng(seed);
     const enemies = [];
     let last = null;
-    const one = () => {
+    const one = (want) => {
+      // estilo Magic Touch: as vezes o proximo inimigo tem a MESMA resposta, para estourar varios com um traco
+      for (let k = 0; want && k < 30; k++) { const it = ALL[pick(r, lv.gens)](r); if (it.answer === want) { last = it.answer; return it; } }
       const g = ALL[pick(r, lv.gens)];
       let it = g(r, last);
       for (let k = 0; k < 6 && it.answer === last; k++) it = g(r, last);
@@ -217,7 +219,8 @@
     for (let i = 0; i < lv.n; i++) {
       const isBoss = lv.boss && i === lv.n - 1;
       const count = isBoss ? 3 : (lv.boss && r() < 0.3 ? 2 : 1);
-      const items = []; for (let k = 0; k < count; k++) items.push(one());
+      const want = !isBoss && i > 0 && r() < 0.4 ? last : null;
+      const items = []; for (let k = 0; k < count; k++) items.push(one(k === 0 ? want : null));
       enemies.push({ items, boss: isBoss });
     }
     // fase 1: garante que cada simbolo do glossario apareca pelo menos uma vez
@@ -235,9 +238,11 @@
     raio:  { icon: '⚡', label: 'RAIO',  tint: 0xd7b8ff, desc: 'Estoura o inimigo mais baixo.' },
     vida:  { icon: '❤', label: 'VIDA',  tint: 0xffb3b8, desc: 'Recupera um coração.' },
   };
-  C.powerItem = function (seed, avoid) {
+  // want: resposta de um balao na tela, para o poder estourar junto (MULTI)
+  C.powerItem = function (seed, want) {
     const r = C.rng(seed);
-    return r() < 0.5 ? gName(r, avoid) : gVenn(r, avoid);
+    for (let k = 0; want && k < 40; k++) { const it = r() < 0.5 ? gName(r) : gVenn(r); if (it.answer === want) return it; }
+    return r() < 0.5 ? gName(r) : gVenn(r);
   };
 
   function gNameFor(k) { return { kind: 'nome', answer: k, lines: NAMES[k], expl: EXPL[k], proof: { type: 'nome', glyph: k } }; }
