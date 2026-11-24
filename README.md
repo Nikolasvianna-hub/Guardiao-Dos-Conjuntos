@@ -106,7 +106,7 @@ Depois abra `http://localhost:8000` no navegador.
 
 ## 🧪 Teste de usabilidade (AV3)
 
-Os resultados e melhorias feitas a partir do feedback dos usuários serão documentados em `docs/av3-feedback/` (a criar na AV3).
+Cenário 3: o jogo é avaliado por pelo menos três professores do Ensino Médio (enredo, conteúdo matemático e usabilidade). Roteiro, respostas e correções em [`docs/av3-feedback/roteiro_cenario3.md`](docs/av3-feedback/roteiro_cenario3.md).
 
 ## 📄 Créditos e licenças
 
